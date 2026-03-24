@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mes Agrumes">
+<meta name="theme-color" content="#E8820C">
+<title>Mes Agrumes</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F3ED;--card:#fff;--accent:#E8820C;--accent-l:#FFF3E0;--green:#4A7C59;--green-l:#E8F0EA;--red:#C0392B;--red-l:#FDEAEA;--blue:#2980B9;--blue-l:#E8F4FD;--txt:#2C2416;--muted:#8B7D6B;--brd:#E8E0D4}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;min-height:100dvh;overscroll-behavior:none;-webkit-font-smoothing:antialiased}
+#app{max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;position:relative;padding-bottom:72px}
+.hdr{background:linear-gradient(135deg,#E8820C,#C96A08);color:#fff;padding:20px 20px 16px;padding-top:max(20px,env(safe-area-inset-top));border-radius:0 0 24px 24px}
+.hdr h1{font-size:22px;font-weight:700;letter-spacing:-.5px}
+.hdr-sub{font-size:13px;opacity:.85;margin-top:2px}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;display:flex;justify-content:space-around;padding:6px 0 max(10px,env(safe-area-inset-bottom));border-top:1px solid var(--brd);z-index:100}
+.nav-b{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;padding:4px 12px;cursor:pointer;font-size:11px;font-family:inherit;color:var(--muted);transition:color .2s}
+.nav-b.on{color:var(--accent);font-weight:600}
+.cd{background:var(--card);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 12px rgba(44,36,22,.07);border:1px solid var(--brd);transition:transform .15s}
+.bdg{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.bdg-a{color:var(--accent);background:var(--accent-l)}.bdg-g{color:var(--green);background:var(--green-l)}.bdg-b{color:var(--blue);background:var(--blue-l)}.bdg-r{color:var(--red);background:var(--red-l)}
+.inp,.sel{width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--brd);font-size:14px;font-family:inherit;background:#FAFAF7;outline:none;transition:border .2s}
+.inp:focus,.sel:focus{border-color:var(--accent)}
+textarea.inp{resize:vertical;min-height:56px}
+.lbl{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.fld{margin-bottom:14px}
+.btn{padding:10px 20px;border-radius:12px;border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:all .15s}
+.btn:active{transform:scale(.96)}
+.btn-p{background:var(--accent);color:#fff}.btn-s{background:var(--brd);color:var(--txt)}.btn-w{background:#fff;color:var(--accent)}
+.btn-google{background:#fff;color:#333;border:1.5px solid var(--brd);padding:12px 24px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:10px;transition:all .15s;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.btn-google:active{transform:scale(.97)}
+.bs{padding:6px 12px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .1s}
+.bs:active{transform:scale(.95)}
+.bs-a{background:var(--accent-l);color:var(--accent)}.bs-g{background:var(--green-l);color:var(--green)}.bs-r{background:var(--red-l);color:var(--red)}.bs-n{background:var(--brd);color:var(--txt)}
+.tag{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid transparent;transition:all .15s}
+.tag.on{border-color:currentColor}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:flex-end;justify-content:center;animation:fi .2s}
+.mc{background:var(--bg);border-radius:24px 24px 0 0;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding:24px 20px calc(32px + env(safe-area-inset-bottom,0px));animation:su .3s ease}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sec{padding:16px 20px}
+.sg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.sc{text-align:center;padding:12px;cursor:pointer}
+.sn{font-size:22px;font-weight:700;margin-top:4px}
+.sl{font-size:11px;color:var(--muted)}
+.gg{display:grid;gap:6px}
+.gc{aspect-ratio:1;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;font-weight:500;cursor:pointer;padding:2px;text-align:center;transition:all .15s;border:1.5px solid var(--brd);background:#F0EDE6;color:var(--muted)}
+.gc.hp{background:var(--green-l);color:var(--green)}.gc.sel{border:2.5px solid var(--accent);box-shadow:0 0 0 3px rgba(232,130,12,.2)}
+.gc:active{transform:scale(.94)}
+.tgl{width:48px;height:28px;border-radius:14px;border:none;cursor:pointer;position:relative;background:var(--brd);transition:background .3s}
+.tgl.on{background:var(--accent)}
+.tgl-k{width:22px;height:22px;border-radius:11px;background:#fff;position:absolute;top:3px;left:3px;transition:left .3s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.tgl.on .tgl-k{left:23px}
+.empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.fb{display:flex;justify-content:space-between;align-items:center}
+.fc{display:flex;align-items:center}
+.g1{flex:1}
+.w100{width:100%}.jc{justify-content:center}
+.ri{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--brd)}
+.ri:last-child{border-bottom:none}
+.ir{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--brd);font-size:13px}
+.ir:last-child{border-bottom:none}
+.splash{position:fixed;inset:0;z-index:9999;background:linear-gradient(145deg,#E8820C,#D4740A);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s,transform .6s}
+.splash.hide{opacity:0;transform:scale(1.05);pointer-events:none}
+.splash-i{font-size:72px;animation:bn 1.2s ease infinite}
+@keyframes bn{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.login-page{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;padding:40px 20px;text-align:center}
+.login-logo{font-size:64px;margin-bottom:16px}
+.login-title{font-size:28px;font-weight:700;color:var(--txt);margin-bottom:8px}
+.login-sub{font-size:14px;color:var(--muted);margin-bottom:32px;max-width:300px;line-height:1.5}
+.sync-bar{background:var(--accent-l);padding:6px 16px;font-size:11px;color:var(--accent);text-align:center;font-weight:600;border-radius:0 0 12px 12px}
+.user-bar{display:flex;align-items:center;gap:8px;margin-top:8px;padding:6px 10px;background:rgba(255,255,255,.15);border-radius:10px;font-size:12px}
+.user-bar img{width:24px;height:24px;border-radius:50%}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+(function(){
+"use strict";
+
+// ── Firebase Config ──
+firebase.initializeApp({
+  apiKey:"AIzaSyBkVTjlsdZvQ-vEYda4fO-4X-Ni6O1sFR4",
+  authDomain:"mes-agrumes.firebaseapp.com",
+  databaseURL:"https://mes-agrumes-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:"mes-agrumes",
+  storageBucket:"mes-agrumes.firebasestorage.app",
+  messagingSenderId:"531593370997",
+  appId:"1:531593370997:web:165aec418c2fda339ec73c",
+  measurementId:"G-M3KVMZEL29"
+});
+
+var auth=firebase.auth();
+var db=firebase.firestore();
+
+// Enable offline cache so data persists between page reloads
+db.enablePersistence({synchronizeTabs:true}).catch(function(e){
+  console.log('Persistence error:',e.code);
+});
+
+// Keep auth session between reloads
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+
+var provider=new firebase.auth.GoogleAuthProvider();
+var currentUser=null;
+var unsub=null; // Firestore listener
+
+// ── Data ──
+var DD={plants:[],careLogs:[],greenhouse:{width:6,height:4,positions:{}},settings:{wateringReminder:true,wateringInterval:3,weatherAlerts:true,weatherLat:48.86,weatherLon:2.35,weatherCity:'Paris'}};
+var D=JSON.parse(JSON.stringify(DD));
+var weatherData=null;
+var weatherLoading=false;
+var saveTimer=null;
+
+function gid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function td(){return new Date().toISOString().split('T')[0]}
+function fd(d){return d?new Date(d+'T00:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'}):'\u2014'}
+
+var LOCS=[{v:'serre',l:'\ud83c\udfe0 Serre',c:'a'},{v:'pot',l:'\ud83e\udeb4 Pot (ext.)',c:'b'},{v:'pleine_terre',l:'\ud83c\udf31 Pleine terre',c:'g'}];
+var RUST=[];for(var ri=-2;ri>=-15;ri--)RUST.push({v:''+ri,l:ri+'\u00b0C'});
+var MONTHS=['Janvier','F\u00e9vrier','Mars','Avril','Mai','Juin','Juillet','Ao\u00fbt','Septembre','Octobre','Novembre','D\u00e9cembre'];
+var USAGES=['Fruit de bouche','Cuisine','Jus','Zestes','Confiture / Marmelade','D\u00e9coration / Parfum','Autre'];
+var FERTS=['Engrais agrumes (NPK)','Engrais organique','Fer ch\u00e9lat\u00e9','Oligo-\u00e9l\u00e9ments','Compost','Autre'];
+var TE={watering:'\ud83d\udca7',fertilizer:'\ud83e\uddea',fruit:'\ud83c\udf4a',other:'\ud83d\udcdd'};
+var TL={watering:'Arrosage',fertilizer:'Engrais',fruit:'R\u00e9colte',other:'Note'};
+function locI(v){for(var i=0;i<LOCS.length;i++)if(LOCS[i].v===v)return LOCS[i];return LOCS[0]}
+function bc(c){return c==='a'?'bdg-a':c==='b'?'bdg-b':'bdg-g'}
+
+function nw(){
+  var now=new Date(),iv=D.settings.wateringInterval||3;
+  return D.plants.filter(function(p){
+    var l=D.careLogs.filter(function(c){return c.plantId===p.id&&c.type==='watering'}).sort(function(a,b){return b.date.localeCompare(a.date)});
+    return !l.length||(now-new Date(l[0].date+'T00:00:00'))/(864e5)>=iv;
+  });
+}
+
+// ── Weather / Frost Alerts ──
+function fetchWeather(){
+  if(weatherLoading||!D.settings.weatherAlerts)return;
+  var lat=D.settings.weatherLat||48.86,lon=D.settings.weatherLon||2.35;
+  weatherLoading=true;
+  var url='https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&daily=temperature_2m_min,temperature_2m_max&timezone=auto&forecast_days=5';
+  fetch(url).then(function(r){return r.json()}).then(function(data){
+    weatherLoading=false;
+    if(data&&data.daily){
+      weatherData={
+        dates:data.daily.time,
+        mins:data.daily.temperature_2m_min,
+        maxs:data.daily.temperature_2m_max
+      };
+      R();
+    }
+  }).catch(function(){weatherLoading=false;});
+}
+
+function getFrostAlerts(){
+  if(!weatherData||!D.settings.weatherAlerts||!D.plants.length)return[];
+  var alerts=[];
+  weatherData.dates.forEach(function(date,i){
+    var minTemp=weatherData.mins[i];
+    var endangered=D.plants.filter(function(p){
+      var rust=parseInt(p.rusticity)||0;
+      return minTemp<=rust+2; // alerte si la temp s'approche à 2° de la rusticité
+    });
+    if(endangered.length>0){
+      var d=new Date(date+'T00:00:00');
+      var dayName=d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'short'});
+      alerts.push({date:dayName,minTemp:minTemp,maxTemp:weatherData.maxs[i],plants:endangered});
+    }
+  });
+  return alerts;
+}
+
+function rFrostBanner(){
+  var alerts=getFrostAlerts();
+  if(!alerts.length)return '';
+  var h='<div class="cd" style="background:var(--red-l);border:2px solid var(--red)">';
+  h+='<div class="fc" style="gap:8px;margin-bottom:8px"><span style="font-size:22px">\u{1F976}</span><strong style="color:var(--red)">Alerte gel !</strong></div>';
+  alerts.forEach(function(a){
+    h+='<div style="margin-bottom:10px;padding:8px;background:rgba(255,255,255,.5);border-radius:10px">';
+    h+='<div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:4px">'+esc(a.date)+' : '+a.minTemp+'\u00b0C min / '+a.maxTemp+'\u00b0C max</div>';
+    h+='<div style="font-size:12px;color:var(--txt)">Plantes en danger :</div>';
+    h+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">';
+    a.plants.forEach(function(p){
+      h+='<span class="bdg bdg-r">'+(p.photo?'':'🍊 ')+esc(p.name)+' ('+p.rusticity+'\u00b0C)</span>';
+    });
+    h+='</div></div>';
+  });
+  h+='<div style="font-size:11px;color:var(--muted);margin-top:4px">Pr\u00e9visions pour '+(D.settings.weatherCity||'Paris')+' \u2022 Alerte si temp. approche \u00e0 2\u00b0C de la rusticit\u00e9</div>';
+  h+='</div>';
+  return h;
+}
+
+function rWeatherSummary(){
+  if(!weatherData)return '';
+  var h='<div class="cd" style="padding:12px"><div class="fc" style="gap:6px;margin-bottom:8px"><span style="font-size:16px">\u{1F321}\ufe0f</span><strong style="font-size:13px">M\u00e9t\u00e9o '+(D.settings.weatherCity||'Paris')+'</strong></div>';
+  h+='<div style="display:flex;gap:6px;overflow-x:auto">';
+  weatherData.dates.forEach(function(date,i){
+    var d=new Date(date+'T00:00:00');
+    var day=d.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric'});
+    var min=weatherData.mins[i],max=weatherData.maxs[i];
+    var cold=min<=0;
+    h+='<div style="text-align:center;padding:6px 8px;border-radius:8px;min-width:60px;background:'+(cold?'var(--red-l)':'#F5F3EF')+'"><div style="font-size:11px;color:var(--muted)">'+day+'</div>';
+    h+='<div style="font-size:18px;margin:2px 0">'+(cold?'\u{2744}\ufe0f':min<5?'\u{1F327}\ufe0f':'\u{2600}\ufe0f')+'</div>';
+    h+='<div style="font-size:12px;font-weight:700;color:'+(cold?'var(--red)':'var(--txt)')+'">'+Math.round(min)+'\u00b0</div>';
+    h+='<div style="font-size:11px;color:var(--muted)">'+Math.round(max)+'\u00b0</div></div>';
+  });
+  h+='</div></div>';
+  return h;
+}
+
+// ── Fertilization Advice ──
+function getFertAdvice(plant){
+  var m=new Date().getMonth(); // 0=jan
+  var inPot=plant.location==='pot'||plant.location==='serre';
+  var advice={icon:'',title:'',text:'',actions:[]};
+
+  if(m>=2&&m<=4){ // Mars-Mai : Reprise + Floraison
+    advice.icon='\ud83c\udf31';
+    advice.title='Reprise de v\u00e9g\u00e9tation';
+    if(m===2){
+      advice.text='C\'est le moment de relancer la fertilisation ! Apporte un engrais organique riche en azote (NPK 5-6-9 ou similaire) pour stimuler la croissance et pr\u00e9parer la floraison.';
+      advice.actions=['Engrais organique complet','Fer ch\u00e9lat\u00e9 si feuilles jaunes'];
+    } else if(m===3){
+      advice.text='Pleine p\u00e9riode de floraison. Continue la fertilisation mensuelle. Le potassium est important pour la nouaison (formation des fruits).';
+      advice.actions=['Engrais organique complet','Oligo-\u00e9l\u00e9ments en foliaire'];
+    } else {
+      advice.text='Fin de floraison et d\u00e9but de nouaison. Fertilise r\u00e9guli\u00e8rement pour assurer la fixation des jeunes fruits sur l\'arbre.';
+      advice.actions=['Engrais organique complet'];
+    }
+    if(inPot)advice.text+='\n\ud83e\udeb4 En pot : environ 5-6g par litre de terreau.';
+    else advice.text+='\n\ud83c\udf31 En pleine terre : 600 \u00e0 900g selon la taille de l\'arbre.';
+  } else if(m>=5&&m<=7){ // Juin-Ao\u00fbt : Grossissement fruits
+    advice.icon='\ud83c\udf4a';
+    advice.title='Grossissement des fruits';
+    advice.text='Les fruits grossissent, les besoins en potassium augmentent. Continue la fertilisation mensuelle avec un engrais \u00e9quilibr\u00e9.';
+    if(m===7)advice.text+=' En ao\u00fbt, fais un dernier apport pour pr\u00e9parer la mise en r\u00e9serve avant l\'automne.';
+    advice.actions=['Engrais organique complet','Potassium si beaucoup de fruits'];
+    if(inPot)advice.text+='\n\ud83e\udeb4 En pot : fertilise chaque mois, arrose bien apr\u00e8s l\'apport.';
+    else advice.text+='\n\ud83c\udf31 En pleine terre : un apport tous les 2-3 mois suffit.';
+  } else if(m>=8&&m<=9){ // Sept-Oct : Fin de saison
+    advice.icon='\ud83c\udf42';
+    advice.title='Fin de saison';
+    advice.text='Dernier apport d\'engrais de la saison (septembre). La plante fait ses r\u00e9serves avant le repos hivernal. Privil\u00e9gie le potassium pour renforcer la r\u00e9sistance au froid.';
+    advice.actions=['Dernier apport d\'engrais organique','Potasse pour la r\u00e9sistance au froid'];
+    if(m===9)advice.text='\n\u26a0\ufe0f Arr\u00eate la fertilisation en octobre. La plante entre en repos.';
+  } else { // Nov-F\u00e9v : Repos
+    advice.icon='\u2744\ufe0f';
+    advice.title='Repos hivernal';
+    advice.text='Pas de fertilisation en hiver ! La plante est au repos. Les racines n\'absorbent quasiment rien quand il fait froid (en dessous de 10\u00b0C).';
+    advice.actions=[];
+    if(m===1)advice.text+=' \ud83d\udcc5 Pr\u00e9pare ton engrais, la reprise approche en mars !';
+  }
+
+  return advice;
+}
+
+function rFertSection(){
+  if(!D.plants.length)return '';
+  var m=new Date().getMonth();
+  var monthName=MONTHS[m];
+  var h='<div style="margin-top:12px"><div class="fb" style="margin-bottom:8px"><h3 style="font-size:16px">\ud83e\uddea Conseils fertilisation</h3><span class="bdg bdg-g">'+monthName+'</span></div>';
+
+  // Group by similar advice (pot vs pleine terre)
+  var potPlants=D.plants.filter(function(p){return p.location==='pot'||p.location==='serre'});
+  var terrePlants=D.plants.filter(function(p){return p.location==='pleine_terre'});
+
+  if(potPlants.length){
+    var adv=getFertAdvice(potPlants[0]);
+    h+='<div class="cd" style="padding:14px"><div class="fc" style="gap:8px;margin-bottom:6px"><span style="font-size:18px">'+adv.icon+'</span><strong style="font-size:14px">'+adv.title+' \u2014 Pots & Serre</strong></div>';
+    h+='<div style="font-size:13px;color:var(--txt);line-height:1.5;white-space:pre-line">'+esc(adv.text)+'</div>';
+    if(adv.actions.length){
+      h+='<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px">';
+      adv.actions.forEach(function(a){h+='<span class="bdg bdg-g">\u2713 '+esc(a)+'</span>'});
+      h+='</div>';
+    }
+    h+='<div style="margin-top:8px;font-size:11px;color:var(--muted)">Concerne : '+potPlants.map(function(p){return esc(p.name)}).join(', ')+'</div>';
+    h+='</div>';
+  }
+
+  if(terrePlants.length){
+    var adv2=getFertAdvice(terrePlants[0]);
+    h+='<div class="cd" style="padding:14px"><div class="fc" style="gap:8px;margin-bottom:6px"><span style="font-size:18px">'+adv2.icon+'</span><strong style="font-size:14px">'+adv2.title+' \u2014 Pleine terre</strong></div>';
+    h+='<div style="font-size:13px;color:var(--txt);line-height:1.5;white-space:pre-line">'+esc(adv2.text)+'</div>';
+    if(adv2.actions.length){
+      h+='<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px">';
+      adv2.actions.forEach(function(a){h+='<span class="bdg bdg-g">\u2713 '+esc(a)+'</span>'});
+      h+='</div>';
+    }
+    h+='<div style="margin-top:8px;font-size:11px;color:var(--muted)">Concerne : '+terrePlants.map(function(p){return esc(p.name)}).join(', ')+'</div>';
+    h+='</div>';
+  }
+
+  h+='<div style="font-size:11px;color:var(--muted);margin-top:4px;margin-bottom:12px">\ud83d\udca1 Privil\u00e9gie les engrais organiques (NPK 5-6-9 environ). Dose indicative en pot : 5-6g/L de terreau par mois de mars \u00e0 octobre.</div>';
+  h+='</div>';
+  return h;
+}
+
+function saveToFirebase(){
+  if(!currentUser)return;
+  // Debounce saves to avoid conflicts
+  if(saveTimer)clearTimeout(saveTimer);
+  saveTimer=setTimeout(function(){
+    db.collection('users').doc(currentUser.uid).set({
+      plants:D.plants,
+      careLogs:D.careLogs,
+      greenhouse:D.greenhouse,
+      settings:D.settings,
+      updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(function(e){console.error('Save error:',e)});
+  },300);
+}
+
+var dataLoaded=false;
+function listenToFirebase(){
+  if(unsub)unsub();
+  if(!currentUser)return;
+  unsub=db.collection('users').doc(currentUser.uid).onSnapshot(function(doc){
+    if(doc.exists){
+      var d=doc.data();
+      D.plants=d.plants||[];
+      D.careLogs=d.careLogs||[];
+      D.greenhouse=d.greenhouse||DD.greenhouse;
+      D.settings=d.settings||DD.settings;
+    }
+    dataLoaded=true;
+    R();
+    if(!weatherData&&D.settings.weatherAlerts)fetchWeather();
+  },function(err){
+    console.error('Firestore listen error:',err);
+    dataLoaded=true;
+    R();
+  });
+}
+
+function persist(){
+  saveToFirebase();
+}
+
+// ── Auth ──
+auth.onAuthStateChanged(function(user){
+  hideSplash();
+  if(user){
+    currentUser=user;
+    dataLoaded=false;
+    listenToFirebase();
+    // Don't render yet - wait for onSnapshot to deliver data
+  } else {
+    currentUser=null;
+    if(unsub){unsub();unsub=null;}
+    D=JSON.parse(JSON.stringify(DD));
+    dataLoaded=false;
+    showLogin();
+  }
+});
+
+function signIn(){
+  auth.signInWithPopup(provider).catch(function(e){
+    // Fallback to redirect for mobile
+    if(e.code==='auth/popup-blocked'||e.code==='auth/popup-closed-by-user'){
+      auth.signInWithRedirect(provider);
+    } else {
+      alert('Erreur de connexion: '+e.message);
+    }
+  });
+}
+
+function signOut(){
+  if(confirm('Se d\u00e9connecter ?'))auth.signOut();
+}
+
+function showLogin(){
+  var a=document.getElementById('app');
+  a.innerHTML='<div class="login-page"><div class="login-logo">\ud83c\udf4b</div><div class="login-title">Mes Agrumes</div><div class="login-sub">Connecte-toi pour synchroniser tes donn\u00e9es entre tous tes appareils</div><button class="btn-google" data-do="signin"><svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Se connecter avec Google</button></div>';
+  var o=document.querySelector('.nav');if(o)o.remove();
+}
+
+// ── DIAGNOSTIC CARENCES ──
+var CARENCES=[
+{id:'fer',name:'Carence en Fer (Chlorose ferrique)',emoji:'\ud83d\udfe1',
+ symptoms:['Feuilles jaunes avec nervures vertes','Touche les jeunes feuilles en premier','Jaunissement entre les nervures'],
+ match:{couleur:'jaune',zone:'jeunes',nervures:'vertes',aspect:'uniforme'},
+ cause:'Le fer est bloqu\u00e9 quand le sol ou le terreau est trop calcaire (pH trop haut). C\'est tr\u00e8s fr\u00e9quent chez les agrumes.',
+ solution:'Apporte du fer ch\u00e9lat\u00e9 (type EDDHA) en arrosage ou en pulv\u00e9risation sur les feuilles. Utilise de l\'eau de pluie si possible. V\u00e9rifie que ton terreau n\'est pas trop calcaire.',
+ urgence:'moyenne',photo_desc:'Feuille jaune vif avec nervures bien vertes'},
+
+{id:'azote',name:'Carence en Azote',emoji:'\ud83c\udf43',
+ symptoms:['Feuilles vert p\u00e2le \u00e0 jaune','Touche les vieilles feuilles en premier','Croissance ralentie, petites feuilles'],
+ match:{couleur:'jaune_pale',zone:'vieilles',nervures:'jaunes_aussi',aspect:'uniforme'},
+ cause:'L\'azote est l\'\u00e9l\u00e9ment principal pour la croissance. Il manque souvent quand on n\'a pas fertilis\u00e9 depuis longtemps.',
+ solution:'Apporte un engrais riche en azote (NPK avec N \u00e9lev\u00e9). Un engrais sp\u00e9cial agrumes fait tr\u00e8s bien l\'affaire. Dose : 5-6g par litre de terreau.',
+ urgence:'moyenne',photo_desc:'Feuille enti\u00e8rement vert p\u00e2le/jaun\u00e2tre'},
+
+{id:'magnesium',name:'Carence en Magn\u00e9sium',emoji:'\ud83c\udf42',
+ symptoms:['Jaune en V entre les nervures','Touche les vieilles feuilles','Les nervures restent vertes, jaune en triangle'],
+ match:{couleur:'jaune',zone:'vieilles',nervures:'vertes',aspect:'triangle'},
+ cause:'Le magn\u00e9sium part souvent avec les arrosages r\u00e9p\u00e9t\u00e9s, surtout en pot. Un exc\u00e8s de potassium peut aussi le bloquer.',
+ solution:'Pulv\u00e9rise du sulfate de magn\u00e9sium (sel d\'Epsom) sur les feuilles : 20g dans 1L d\'eau, 2-3 fois \u00e0 15 jours d\'intervalle.',
+ urgence:'faible',photo_desc:'Jaune en forme de V partant de la pointe de la feuille'},
+
+{id:'manganese',name:'Carence en Mangan\u00e8se',emoji:'\ud83c\udf3f',
+ symptoms:['Jaune entre les nervures sur jeunes feuilles','Nervures vertes avec halo vert','Motif en \u00e9chelle / rayures'],
+ match:{couleur:'jaune',zone:'jeunes',nervures:'vertes',aspect:'rayures'},
+ cause:'Souvent li\u00e9 \u00e0 un pH trop \u00e9lev\u00e9 du sol, comme pour le fer. Les deux carences vont souvent ensemble.',
+ solution:'Apporte du mangan\u00e8se en pulv\u00e9risation foliaire (sulfate de mangan\u00e8se). Corrige aussi le pH si n\u00e9cessaire. Un engrais complet avec oligo-\u00e9l\u00e9ments aide bien.',
+ urgence:'faible',photo_desc:'Jeune feuille avec nervures vertes et bandes jaunes entre'},
+
+{id:'zinc',name:'Carence en Zinc',emoji:'\ud83e\udeb6',
+ symptoms:['Petites feuilles d\u00e9form\u00e9es','Feuilles en rosette, serr\u00e9es','Marbrures jaunes irr\u00e9guli\u00e8res'],
+ match:{couleur:'marbrures',zone:'jeunes',nervures:'vertes',aspect:'deformees'},
+ cause:'Le zinc est bloqu\u00e9 en sol tr\u00e8s calcaire ou quand il y a trop de phosphore. Fr\u00e9quent dans les sols lourds.',
+ solution:'Pulv\u00e9risation foliaire de sulfate de zinc (2-3g/L). Un apport d\'oligo-\u00e9l\u00e9ments complet est souvent la meilleure approche.',
+ urgence:'moyenne',photo_desc:'Petites feuilles group\u00e9es avec marbrures jaunes'},
+
+{id:'potassium',name:'Carence en Potassium',emoji:'\ud83c\udf42',
+ symptoms:['Bord des feuilles brun / grill\u00e9','Commence par les vieilles feuilles','Fruits petits ou qui tombent'],
+ match:{couleur:'brun_bord',zone:'vieilles',nervures:'normales',aspect:'bord_brule'},
+ cause:'Le potassium est tr\u00e8s important pour les fruits. Il s\'\u00e9puise vite en pot avec les arrosages fr\u00e9quents.',
+ solution:'Utilise un engrais riche en potassium (le K dans NPK). La cendre de bois dilu\u00e9e est aussi une bonne source naturelle. Engrais agrumes classique, bien dos\u00e9.',
+ urgence:'haute',photo_desc:'Bords des feuilles brul\u00e9s, marron'},
+
+{id:'calcium',name:'Carence en Calcium',emoji:'\ud83e\udea8',
+ symptoms:['D\u00e9formation des jeunes feuilles','Bords ondul\u00e9s, feuilles recroquevill\u00e9es','Fruits qui \u00e9clatent ou pourrissent au bout'],
+ match:{couleur:'normal',zone:'jeunes',nervures:'normales',aspect:'deformees'},
+ cause:'Rare en sol calcaire, mais possible en sol tr\u00e8s acide ou en pot avec de l\'eau de pluie uniquement.',
+ solution:'Un apport de dolomie ou de gypse corrige le probl\u00e8me. Alterne eau de pluie et eau du robinet si tu n\'utilises que de la pluie.',
+ urgence:'faible',photo_desc:'Jeunes feuilles d\u00e9form\u00e9es aux bords ondul\u00e9s'}
+];
+
+var DIAG_QUESTIONS=[
+{id:'couleur',question:'Quelle couleur ont les feuilles touch\u00e9es ?',emoji:'\ud83c\udfa8',
+ options:[
+  {v:'jaune',l:'\ud83d\udfe1 Jaune vif',desc:'Jaune franc, bien visible'},
+  {v:'jaune_pale',l:'\ud83d\udfe8 Vert p\u00e2le / Jaun\u00e2tre',desc:'P\u00e2le, d\u00e9lav\u00e9'},
+  {v:'brun_bord',l:'\ud83d\udfe4 Brun / Bords grill\u00e9s',desc:'Marron sur les bords'},
+  {v:'marbrures',l:'\ud83d\udfe2 Marbrures irr\u00e9guli\u00e8res',desc:'Taches et motifs m\u00e9lang\u00e9s'},
+  {v:'normal',l:'\ud83c\udf3f Couleur normale',desc:'Vert mais forme bizarre'}
+]},
+{id:'zone',question:'Quelles feuilles sont touch\u00e9es en premier ?',emoji:'\ud83c\udf33',
+ options:[
+  {v:'jeunes',l:'\ud83c\udf31 Les jeunes',desc:'En haut, les nouvelles pousses'},
+  {v:'vieilles',l:'\ud83c\udf42 Les vieilles',desc:'En bas, les plus anciennes'},
+  {v:'toutes',l:'\ud83c\udf3f Toutes',desc:'Un peu partout'}
+]},
+{id:'nervures',question:'Comment sont les nervures (les \u00ab veines \u00bb de la feuille) ?',emoji:'\ud83d\udd0d',
+ options:[
+  {v:'vertes',l:'\u2705 Nervures vertes',desc:'Les nervures restent vertes, le jaune est entre'},
+  {v:'jaunes_aussi',l:'\ud83d\udfe1 Jaunes aussi',desc:'Toute la feuille est jaune/p\u00e2le'},
+  {v:'normales',l:'\u27a1\ufe0f Normales',desc:'Rien de sp\u00e9cial sur les nervures'}
+]},
+{id:'aspect',question:'Quel aspect particulier observes-tu ?',emoji:'\ud83e\uddd0',
+ options:[
+  {v:'uniforme',l:'\ud83d\udfe8 Uniforme',desc:'Jaunissement r\u00e9gulier'},
+  {v:'triangle',l:'\ud83d\udd3b En V / Triangle',desc:'Jaune en forme de V depuis la pointe'},
+  {v:'rayures',l:'\ud83c\udff3\ufe0f Rayures / \u00c9chelle',desc:'Bandes altern\u00e9es jaune-vert'},
+  {v:'bord_brule',l:'\ud83d\udd25 Bords brul\u00e9s',desc:'Les bords sont cram\u00e9s'},
+  {v:'deformees',l:'\ud83d\udd00 D\u00e9form\u00e9es',desc:'Feuilles tordues, petites, bizarres'}
+]}
+];
+
+var diagStep=0,diagAnswers={},diagResult=null;
+
+function diagReset(){diagStep=0;diagAnswers={};diagResult=null;}
+
+function diagCalculate(){
+  var scores={};
+  CARENCES.forEach(function(c){
+    var score=0,total=0;
+    Object.keys(c.match).forEach(function(k){
+      total++;
+      if(diagAnswers[k]===c.match[k])score+=3;
+      else if(k==='zone'&&diagAnswers[k]==='toutes')score+=1;
+    });
+    scores[c.id]={carence:c,score:score,pct:Math.round(score/(total*3)*100)};
+  });
+  var sorted=Object.values(scores).sort(function(a,b){return b.score-a.score});
+  diagResult={best:sorted[0],others:sorted.slice(1,3).filter(function(s){return s.pct>=25})};
+}
+
+function rDiag(){
+  var h='<div class="hdr"><button data-go="home" style="background:none;border:none;cursor:pointer;color:#fff;font-size:14px;margin-bottom:8px;padding:0;font-family:inherit">\u2190 Retour</button><h1>\ud83e\ude7a Diagnostic des carences</h1><div class="hdr-sub">D\u00e9cris ce que tu vois, je te dis quoi faire !</div></div><div class="sec">';
+
+  // Progress bar
+  if(!diagResult){
+    var pct=DIAG_QUESTIONS.length>0?Math.round(diagStep/DIAG_QUESTIONS.length*100):0;
+    h+='<div style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;font-weight:600;color:var(--muted)">\u00c9tape '+(diagStep+1)+' / '+DIAG_QUESTIONS.length+'</span><span style="font-size:12px;font-weight:600;color:var(--accent)">'+pct+'%</span></div>';
+    h+='<div style="height:6px;background:var(--brd);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--accent);border-radius:3px;transition:width .3s"></div></div></div>';
+  }
+
+  if(diagResult){
+    // Résultat
+    var best=diagResult.best;
+    var urgColors={haute:'var(--red)',moyenne:'var(--accent)',faible:'var(--green)'};
+    var urgBg={haute:'var(--red-l)',moyenne:'var(--accent-l)',faible:'var(--green-l)'};
+    var urgTxt={haute:'Urgente',moyenne:'Mod\u00e9r\u00e9e',faible:'Faible'};
+
+    h+='<div class="cd" style="border:2px solid var(--accent);padding:20px;text-align:center;margin-bottom:12px">';
+    h+='<div style="font-size:40px;margin-bottom:8px">'+best.carence.emoji+'</div>';
+    h+='<div style="font-size:18px;font-weight:700;margin-bottom:4px">'+esc(best.carence.name)+'</div>';
+    h+='<div style="display:flex;gap:8px;justify-content:center;margin-bottom:12px"><span class="bdg" style="background:'+urgBg[best.carence.urgence]+';color:'+urgColors[best.carence.urgence]+'">Urgence : '+urgTxt[best.carence.urgence]+'</span><span class="bdg bdg-b">Confiance : '+best.pct+'%</span></div>';
+    h+='</div>';
+
+    // Symptômes reconnus
+    h+='<div class="cd"><div style="font-size:13px;font-weight:700;margin-bottom:8px">\ud83d\udd0d Sympt\u00f4mes typiques</div>';
+    best.carence.symptoms.forEach(function(s){
+      h+='<div style="font-size:13px;padding:4px 0;display:flex;gap:8px;align-items:flex-start"><span style="color:var(--accent)">\u2713</span><span>'+esc(s)+'</span></div>';
+    });
+    h+='</div>';
+
+    // Cause
+    h+='<div class="cd"><div style="font-size:13px;font-weight:700;margin-bottom:6px">\ud83e\uddd0 Pourquoi \u00e7a arrive ?</div>';
+    h+='<div style="font-size:13px;line-height:1.6;color:var(--txt)">'+esc(best.carence.cause)+'</div></div>';
+
+    // Solution
+    h+='<div class="cd" style="background:var(--green-l);border:1.5px solid rgba(74,124,89,.2)"><div style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--green)">\u2705 Que faire ?</div>';
+    h+='<div style="font-size:13px;line-height:1.6;color:var(--txt)">'+esc(best.carence.solution)+'</div></div>';
+
+    // Autres possibilités
+    if(diagResult.others.length){
+      h+='<div style="margin-top:12px"><div style="font-size:13px;font-weight:700;margin-bottom:8px;color:var(--muted)">\ud83e\udd14 Autres possibilit\u00e9s</div>';
+      diagResult.others.forEach(function(o){
+        h+='<div class="cd" style="padding:12px;display:flex;gap:10px;align-items:center;cursor:pointer" data-diaginfo="'+o.carence.id+'">';
+        h+='<span style="font-size:24px">'+o.carence.emoji+'</span>';
+        h+='<div class="g1"><div style="font-size:13px;font-weight:600">'+esc(o.carence.name)+'</div>';
+        h+='<div style="font-size:11px;color:var(--muted)">Confiance : '+o.pct+'%</div></div>';
+        h+='<span style="font-size:14px;color:var(--muted)">\u203a</span></div>';
+      });
+      h+='</div>';
+    }
+
+    h+='<div style="display:flex;gap:10px;margin-top:16px"><button class="btn btn-p g1 jc" data-do="diag-restart">\ud83d\udd04 Nouveau diagnostic</button></div>';
+
+  } else if(diagStep<DIAG_QUESTIONS.length){
+    // Question en cours
+    var q=DIAG_QUESTIONS[diagStep];
+    h+='<div class="cd" style="padding:20px"><div style="font-size:32px;text-align:center;margin-bottom:12px">'+q.emoji+'</div>';
+    h+='<div style="font-size:16px;font-weight:700;text-align:center;margin-bottom:16px">'+esc(q.question)+'</div>';
+    h+='<div style="display:grid;gap:8px">';
+    q.options.forEach(function(opt){
+      h+='<button class="cd" data-diagans="'+opt.v+'" style="padding:14px;cursor:pointer;text-align:left;margin:0;transition:all .15s;border:1.5px solid var(--brd)">';
+      h+='<div style="font-size:14px;font-weight:600">'+opt.l+'</div>';
+      h+='<div style="font-size:12px;color:var(--muted);margin-top:2px">'+esc(opt.desc)+'</div>';
+      h+='</button>';
+    });
+    h+='</div></div>';
+
+    if(diagStep>0){
+      h+='<button class="btn btn-s" style="margin-top:12px" data-do="diag-back">\u2190 Question pr\u00e9c\u00e9dente</button>';
+    }
+  }
+
+  h+='</div>';
+  return h;
+}
+
+// ── RAPPEL REMPOTAGE ──
+function getRepotAlerts(){
+  var now=new Date(),alerts=[];
+  D.plants.forEach(function(p){
+    if(p.location==='pleine_terre')return; // pas de rempotage en pleine terre
+    if(!p.purchaseDate)return;
+    var purchase=new Date(p.purchaseDate+'T00:00:00');
+    var years=(now-purchase)/(365.25*864e5);
+    var lastRepot=null;
+    // Chercher le dernier rempotage dans les soins
+    D.careLogs.forEach(function(l){
+      if(l.plantId===p.id&&l.notes&&l.notes.toLowerCase().indexOf('rempot')>=0){
+        if(!lastRepot||l.date>lastRepot)lastRepot=l.date;
+      }
+    });
+    var ref=lastRepot?new Date(lastRepot+'T00:00:00'):purchase;
+    var sinceLast=(now-ref)/(365.25*864e5);
+    var status='ok',label='',color='';
+    if(sinceLast>=3){status='urgent';label='Rempotage urgent (\u00e0 faire !)';color='var(--red)';}
+    else if(sinceLast>=2){status='soon';label='Rempotage \u00e0 pr\u00e9voir';color='var(--accent)';}
+    else if(sinceLast>=1.5){status='ok_soon';label='Rempotage dans ~6 mois';color='var(--green)';}
+    else{status='ok';label='';color='';}
+    if(status!=='ok')alerts.push({plant:p,status:status,label:label,color:color,years:Math.round(sinceLast*10)/10});
+  });
+  alerts.sort(function(a,b){var o={urgent:0,soon:1,ok_soon:2};return (o[a.status]||0)-(o[b.status]||0)});
+  return alerts;
+}
+
+function rRepotBanner(){
+  var alerts=getRepotAlerts().filter(function(a){return a.status==='urgent'||a.status==='soon'});
+  if(!alerts.length)return '';
+  var h='<div class="cd" style="background:var(--accent-l);border:1.5px solid rgba(232,130,12,.25)">';
+  h+='<div class="fc" style="gap:8px;margin-bottom:8px"><span style="font-size:20px">\ud83e\udeb4</span><strong style="color:var(--accent)">Rempotage \u00e0 pr\u00e9voir</strong></div>';
+  alerts.forEach(function(a){
+    var bg=a.status==='urgent'?'var(--red-l)':'#FFF8F0';
+    h+='<div style="display:flex;align-items:center;gap:8px;padding:8px;background:'+bg+';border-radius:8px;margin-bottom:4px">';
+    h+=(a.plant.photo?'<img src="'+a.plant.photo+'" style="width:32px;height:32px;border-radius:8px;object-fit:cover">':'<span style="font-size:20px">\ud83c\udf4a</span>');
+    h+='<div class="g1"><div style="font-size:13px;font-weight:600">'+esc(a.plant.name)+'</div>';
+    h+='<div style="font-size:11px;color:'+a.color+'">'+a.label+' ('+a.years+' an'+(a.years>1?'s':'')+')</div></div></div>';
+  });
+  h+='<div style="font-size:11px;color:var(--muted);margin-top:6px">\ud83d\udca1 Les agrumes en pot se rempotent tous les 2-3 ans, au printemps (mars-avril).</div>';
+  h+='</div>';
+  return h;
+}
+
+// ── PARTAGE COLLECTION ──
+function generateShareText(){
+  if(!D.plants.length)return '';
+  var lines=['\ud83c\udf4b Ma collection d\'agrumes \u2014 '+D.plants.length+' plante'+(D.plants.length>1?'s':''),''];
+  var byLoc={serre:[],pot:[],pleine_terre:[]};
+  D.plants.forEach(function(p){(byLoc[p.location]||byLoc.serre).push(p)});
+
+  if(byLoc.serre.length){
+    lines.push('\ud83c\udfe0 En serre ('+byLoc.serre.length+')');
+    byLoc.serre.forEach(function(p){
+      var r=p.rusticity?(', rusticit\u00e9 '+p.rusticity+'\u00b0C'):'';
+      lines.push('  \u2022 '+p.name+(p.variety?' ('+p.variety+')':'')+r);
+    });
+    lines.push('');
+  }
+  if(byLoc.pot.length){
+    lines.push('\ud83e\udeb4 En pot ('+byLoc.pot.length+')');
+    byLoc.pot.forEach(function(p){
+      var r=p.rusticity?(', rusticit\u00e9 '+p.rusticity+'\u00b0C'):'';
+      lines.push('  \u2022 '+p.name+(p.variety?' ('+p.variety+')':'')+r);
+    });
+    lines.push('');
+  }
+  if(byLoc.pleine_terre.length){
+    lines.push('\ud83c\udf31 En pleine terre ('+byLoc.pleine_terre.length+')');
+    byLoc.pleine_terre.forEach(function(p){
+      var r=p.rusticity?(', rusticit\u00e9 '+p.rusticity+'\u00b0C'):'';
+      lines.push('  \u2022 '+p.name+(p.variety?' ('+p.variety+')':'')+r);
+    });
+    lines.push('');
+  }
+
+  // Stats
+  var ferts=D.careLogs.filter(function(l){return l.type==='fertilizer'}).length;
+  var fruits=0;D.careLogs.forEach(function(l){if(l.type==='fruit')fruits+=parseInt(l.fruitCount)||0});
+  lines.push('\ud83d\udcca Stats : '+D.careLogs.length+' soins enregistr\u00e9s, '+ferts+' fertilisations, '+fruits+' fruits r\u00e9colt\u00e9s');
+  lines.push('');
+  lines.push('G\u00e9n\u00e9r\u00e9 avec \ud83c\udf4b Mes Agrumes');
+  return lines.join('\n');
+}
+
+function rSharePage(){
+  var text=generateShareText();
+  var h='<div class="hdr"><button data-go="home" style="background:none;border:none;cursor:pointer;color:#fff;font-size:14px;margin-bottom:8px;padding:0;font-family:inherit">\u2190 Retour</button><h1>\ud83d\udce4 Partager ma collection</h1><div class="hdr-sub">Montre ta collection \u00e0 d\'autres passionn\u00e9s !</div></div><div class="sec">';
+
+  if(!D.plants.length){
+    h+='<div class="empty"><div style="font-size:40px">\ud83c\udf31</div><div style="font-size:14px;margin-top:8px">Ajoute des plantes d\'abord !</div></div>';
+    return h+'</div>';
+  }
+
+  // Aperçu visuel
+  h+='<div class="cd" style="padding:16px">';
+  h+='<div style="text-align:center;margin-bottom:12px"><span style="font-size:32px">\ud83c\udf4b</span><div style="font-size:16px;font-weight:700;margin-top:4px">Ma collection</div><div style="font-size:12px;color:var(--muted)">'+D.plants.length+' agrume'+(D.plants.length>1?'s':'')+'</div></div>';
+
+  // Galerie mini
+  h+='<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:12px">';
+  D.plants.forEach(function(p){
+    var lo=locI(p.location);
+    h+='<div style="text-align:center;width:70px">';
+    h+=(p.photo?'<img src="'+p.photo+'" style="width:52px;height:52px;border-radius:12px;object-fit:cover;border:2px solid var(--brd)">':'<div style="width:52px;height:52px;border-radius:12px;background:var(--accent-l);display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:24px">\ud83c\udf4a</div>');
+    h+='<div style="font-size:10px;font-weight:600;margin-top:3px;line-height:1.2">'+esc(p.name)+'</div>';
+    h+='<span class="bdg '+bc(lo.c)+'" style="font-size:9px;padding:1px 6px;margin-top:2px">'+lo.l.replace(/\ud83c\udfe0 |\ud83e\udeb4 |\ud83c\udf31 /,'')+'</span>';
+    h+='</div>';
+  });
+  h+='</div></div>';
+
+  // Texte à copier
+  h+='<div class="cd" style="padding:14px"><div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:8px">TEXTE \u00c0 PARTAGER</div>';
+  h+='<div id="share-text" style="font-size:12px;line-height:1.6;white-space:pre-wrap;background:#FAFAF7;padding:12px;border-radius:10px;border:1px solid var(--brd);max-height:300px;overflow-y:auto">'+esc(text)+'</div></div>';
+
+  // Boutons
+  h+='<div style="display:flex;gap:10px;margin-top:12px">';
+  h+='<button class="btn btn-p g1 jc" data-do="share-copy">\ud83d\udccb Copier le texte</button>';
+  h+='<button class="btn btn-s g1 jc" data-do="share-native">\ud83d\udce4 Partager</button>';
+  h+='</div>';
+
+  h+='<div style="font-size:11px;color:var(--muted);text-align:center;margin-top:12px">\ud83d\udca1 Copie le texte et envoie-le sur un forum, un groupe Facebook, WhatsApp...</div>';
+
+  h+='</div>';
+  return h;
+}
+
+// ── CALENDRIER DES TÂCHES ──
+var calViewMonth=new Date().getMonth(); // 0-11
+
+// Base de données complète des tâches par mois (0=janvier)
+// Chaque tâche a : mois concernés, type, emoji, titre, description selon emplacement
+var TASKS_DB=[
+// ── ENGRAIS ──
+{type:'engrais',emoji:'\ud83e\uddea',title:'Premier apport d\u2019engrais',
+ months:[2],locs:['serre','pot','pleine_terre'],
+ desc:{serre:'Reprends la fertilisation ! Engrais organique agrumes, ~5g/L de terreau. La serre se r\u00e9chauffe, les racines red\u00e9marrent.',
+       pot:'Reprends la fertilisation ! Engrais organique agrumes, ~5g/L de terreau. Les r\u00e9serves du pot sont limit\u00e9es.',
+       pleine_terre:'Premier apport de la saison. 600 \u00e0 900g d\u2019engrais organique au pied de l\u2019arbre, griffé l\u00e9g\u00e8rement.'},
+ priority:'haute'},
+
+{type:'engrais',emoji:'\ud83e\uddea',title:'Engrais mensuel',
+ months:[3,4,5,6,7],locs:['serre','pot'],
+ desc:{serre:'Apport mensuel d\u2019engrais agrumes (~5g/L). Arrose bien apr\u00e8s. C\u2019est la pleine saison de croissance !',
+       pot:'Apport mensuel d\u2019engrais agrumes (~5g/L). En pot les r\u00e9serves s\u2019\u00e9puisent vite, ne rate pas ce rendez-vous.'},
+ priority:'haute'},
+
+{type:'engrais',emoji:'\ud83e\uddea',title:'Engrais trimestriel',
+ months:[4,7],locs:['pleine_terre'],
+ desc:{pleine_terre:'Apport d\u2019engrais au pied, 600-900g. En pleine terre un apport tous les 2-3 mois suffit.'},
+ priority:'moyenne'},
+
+{type:'engrais',emoji:'\ud83e\uddea',title:'Dernier engrais de la saison',
+ months:[8],locs:['serre','pot','pleine_terre'],
+ desc:{serre:'Dernier apport avant le repos hivernal. Privil\u00e9gie le potassium pour renforcer la r\u00e9sistance au froid.',
+       pot:'Dernier apport ! Apr\u00e8s septembre, on arr\u00eate tout. Le potassium aide \u00e0 passer l\u2019hiver.',
+       pleine_terre:'Dernier apport de l\u2019ann\u00e9e. Mise en r\u00e9serve avant l\u2019hiver. Potasse bienvenue.'},
+ priority:'haute'},
+
+// ── TAILLE ──
+{type:'taille',emoji:'\u2702\ufe0f',title:'Taille de formation / \u00e9quilibrage',
+ months:[2,3],locs:['serre','pot','pleine_terre'],
+ desc:{serre:'Taille l\u00e9g\u00e8re pour \u00e9quilibrer la silhouette. Supprime le bois mort et les branches qui se croisent. Pas de taille s\u00e9v\u00e8re !',
+       pot:'Taille douce pour garder une forme compacte. Supprime le bois mort, les branches qui partent vers l\u2019int\u00e9rieur. A\u00e9re le centre.',
+       pleine_terre:'Taille de nettoyage : bois mort, gourmands, branches qui se croisent. Les agrumes n\u2019aiment pas les tailles s\u00e9v\u00e8res.'},
+ priority:'moyenne'},
+
+{type:'taille',emoji:'\u2702\ufe0f',title:'Pincer les gourmands',
+ months:[5,6],locs:['serre','pot','pleine_terre'],
+ desc:{serre:'Pince les pousses trop vigoureuses qui partent droit vers le haut (gourmands). \u00c7a redirige l\u2019\u00e9nergie vers les fruits.',
+       pot:'Supprime les gourmands (grandes pousses verticales). En pot, chaque branche compte, on veut des fruits pas du bois inutile.',
+       pleine_terre:'Retire les gourmands et les rejets au pied. \u00c7a concentre la s\u00e8ve vers les branches fruitières.'},
+ priority:'faible'},
+
+// ── REMPOTAGE ──
+{type:'rempotage',emoji:'\ud83e\udeb4',title:'Rempotage (tous les 2-3 ans)',
+ months:[3,4],locs:['pot'],
+ desc:{pot:'Si \u00e7a fait 2-3 ans que tu n\u2019as pas rempot\u00e9 : c\u2019est le moment ! Pot 2-4 cm plus grand, terreau agrumes. D\u00e9m\u00eale un peu les racines.'},
+ priority:'moyenne'},
+
+{type:'rempotage',emoji:'\ud83e\udeb4',title:'Surfaçage (ann\u00e9e sans rempotage)',
+ months:[3],locs:['serre','pot'],
+ desc:{serre:'Si pas de rempotage cette ann\u00e9e : retire les 3-4 premiers cm de terreau et remplace par du frais. \u00c7a renouvelle les nutriments.',
+       pot:'Pas de rempotage pr\u00e9vu ? Fais un surfa\u00e7age : retire le dessus du terreau (3-4 cm) et remets du terreau neuf + un peu d\u2019engrais.'},
+ priority:'faible'},
+
+{type:'rempotage',emoji:'\ud83e\udeb4',title:'V\u00e9rifier le drainage',
+ months:[2],locs:['serre','pot'],
+ desc:{serre:'Avant la reprise : v\u00e9rifie que l\u2019eau s\u2019\u00e9coule bien par le fond. Des racines bouchent le trou ? D\u00e9gage-les.',
+       pot:'V\u00e9rifie que les trous de drainage ne sont pas bouch\u00e9s. L\u2019eau stagnante = racines pourries. Ajoute des billes d\u2019argile si besoin.'},
+ priority:'moyenne'},
+
+// ── TRAITEMENTS (bonus utile) ──
+{type:'engrais',emoji:'\ud83c\udf3f',title:'Fer ch\u00e9lat\u00e9 pr\u00e9ventif',
+ months:[3,6],locs:['serre','pot'],
+ desc:{serre:'Un apport pr\u00e9ventif de fer ch\u00e9lat\u00e9 (EDDHA) \u00e9vite la chlorose. Surtout si ton eau est calcaire.',
+       pot:'En pot, la chlorose (feuilles jaunes / nervures vertes) arrive vite. Un apport de fer ch\u00e9lat\u00e9 2x par an pr\u00e9vient le probl\u00e8me.'},
+ priority:'faible'},
+
+// ── HIVERNAGE (lié à l'emplacement) ──
+{type:'rempotage',emoji:'\ud83c\udfe0',title:'Rentrer les pots en serre / abri',
+ months:[9,10],locs:['pot'],
+ desc:{pot:'Quand les nuits descendent sous 5\u00b0C, il est temps de rentrer tes agrumes en pot \u00e0 l\u2019abri. Id\u00e9al : serre froide, v\u00e9randa non chauff\u00e9e (5-12\u00b0C).'},
+ priority:'haute'},
+
+{type:'rempotage',emoji:'\u2600\ufe0f',title:'Sortir les pots',
+ months:[4,3],locs:['pot'],
+ desc:{pot:'Quand les gel\u00e9es sont pass\u00e9es (mi-avril selon ta r\u00e9gion), ressors progressivement tes agrumes. D\u2019abord \u00e0 mi-ombre quelques jours, puis au soleil.'},
+ priority:'haute'}
+];
+
+var TASK_COLORS={engrais:{bg:'var(--green-l)',color:'var(--green)',icon:'\ud83e\uddea'},
+                 taille:{bg:'var(--blue-l)',color:'var(--blue)',icon:'\u2702\ufe0f'},
+                 rempotage:{bg:'var(--accent-l)',color:'var(--accent)',icon:'\ud83e\udeb4'}};
+
+function getTasksForMonth(m){
+  if(!D.plants.length)return[];
+  var tasks=[];
+  TASKS_DB.forEach(function(t){
+    if(t.months.indexOf(m)<0)return;
+    // Trouver les plantes concernées par emplacement
+    var concerned=D.plants.filter(function(p){return t.locs.indexOf(p.location)>=0});
+    if(!concerned.length)return;
+
+    // Grouper par emplacement pour donner le bon conseil
+    var locsFound={};
+    concerned.forEach(function(p){locsFound[p.location]=locsFound[p.location]||[];locsFound[p.location].push(p)});
+
+    Object.keys(locsFound).forEach(function(loc){
+      var desc=t.desc[loc]||t.desc[Object.keys(t.desc)[0]];
+      tasks.push({
+        type:t.type,emoji:t.emoji,title:t.title,desc:desc,priority:t.priority,
+        plants:locsFound[loc],location:loc
+      });
+    });
+  });
+
+  // Trier : haute priorité d'abord
+  var prio={haute:0,moyenne:1,faible:2};
+  tasks.sort(function(a,b){return (prio[a.priority]||1)-(prio[b.priority]||1)});
+  return tasks;
+}
+
+function rCal(){
+  var curMonth=new Date().getMonth();
+  var h='<div class="hdr"><button data-go="home" style="background:none;border:none;cursor:pointer;color:#fff;font-size:14px;margin-bottom:8px;padding:0;font-family:inherit">\u2190 Retour</button><h1>\ud83d\udcc5 Calendrier des t\u00e2ches</h1><div class="hdr-sub">Quoi faire et quand pour tes agrumes</div></div><div class="sec">';
+
+  // ─── Section 1 : Tâches du moment ───
+  var nowTasks=getTasksForMonth(curMonth);
+  h+='<div style="margin-bottom:20px"><div class="fb" style="margin-bottom:10px"><h3 style="font-size:16px">\ud83d\udea8 Ce mois-ci : '+MONTHS[curMonth]+'</h3><span class="bdg bdg-a">'+nowTasks.length+' t\u00e2che'+(nowTasks.length>1?'s':'')+'</span></div>';
+
+  if(!nowTasks.length){
+    h+='<div class="cd" style="text-align:center;padding:24px;color:var(--muted)"><div style="font-size:32px;margin-bottom:8px">\u2615</div><div style="font-size:14px;font-weight:600">Rien de sp\u00e9cial ce mois-ci</div><div style="font-size:12px;margin-top:4px">Tes agrumes se reposent tranquillement</div></div>';
+  } else {
+    nowTasks.forEach(function(t){
+      var tc=TASK_COLORS[t.type]||{bg:'#F5F3EF',color:'var(--muted)'};
+      var prioBdg=t.priority==='haute'?'<span class="bdg bdg-r" style="font-size:10px">Prioritaire</span>':'';
+      h+='<div class="cd" style="padding:14px;border-left:4px solid '+tc.color+'">';
+      h+='<div class="fb" style="margin-bottom:6px"><div class="fc" style="gap:8px"><span style="font-size:18px">'+t.emoji+'</span><span style="font-size:14px;font-weight:700">'+esc(t.title)+'</span></div>'+prioBdg+'</div>';
+      h+='<div style="font-size:13px;line-height:1.6;color:var(--txt);margin-bottom:8px">'+esc(t.desc)+'</div>';
+      h+='<div style="display:flex;flex-wrap:wrap;gap:4px">';
+      var locInfo=locI(t.location);
+      h+='<span class="bdg '+bc(locInfo.c)+'" style="font-size:10px">'+locInfo.l+'</span>';
+      t.plants.forEach(function(p){h+='<span class="bdg" style="background:#F5F3EF;color:var(--muted);font-size:10px">'+esc(p.name)+'</span>'});
+      h+='</div></div>';
+    });
+  }
+  h+='</div>';
+
+  // ─── Section 2 : Vue calendrier mois par mois ───
+  h+='<div style="margin-bottom:12px"><h3 style="font-size:16px;margin-bottom:12px">\ud83d\udcc6 Vue par mois</h3>';
+
+  // Navigation mois
+  h+='<div class="fc jc" style="gap:16px;margin-bottom:16px">';
+  h+='<button class="bs bs-a" data-caldir="-1" style="font-size:16px;padding:8px 14px">\u2039</button>';
+  h+='<div style="text-align:center;min-width:140px"><div style="font-size:16px;font-weight:700">'+MONTHS[calViewMonth]+'</div>';
+  var calDiff=calViewMonth-curMonth;var calLabel='';
+  if(calDiff===0)calLabel='Ce mois-ci';
+  else if(calDiff===1||calDiff===-11)calLabel='Mois prochain';
+  else if(calDiff===-1||calDiff===11)calLabel='Mois dernier';
+  if(calLabel)h+='<div style="font-size:11px;color:var(--accent);font-weight:600">'+calLabel+'</div>';
+  h+='</div>';
+  h+='<button class="bs bs-a" data-caldir="1" style="font-size:16px;padding:8px 14px">\u203a</button></div>';
+
+  // Tâches du mois sélectionné
+  var viewTasks=getTasksForMonth(calViewMonth);
+  if(!viewTasks.length){
+    h+='<div class="cd" style="text-align:center;padding:20px;color:var(--muted)"><div style="font-size:24px;margin-bottom:6px">\ud83d\ude34</div><div style="font-size:13px">Pas de t\u00e2ches en '+MONTHS[calViewMonth]+'</div></div>';
+  } else {
+    viewTasks.forEach(function(t){
+      var tc=TASK_COLORS[t.type]||{bg:'#F5F3EF',color:'var(--muted)'};
+      h+='<div class="cd" style="padding:12px;display:flex;gap:10px;align-items:flex-start">';
+      h+='<div style="width:36px;height:36px;border-radius:10px;background:'+tc.bg+';display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:16px">'+t.emoji+'</span></div>';
+      h+='<div class="g1"><div style="font-size:13px;font-weight:700">'+esc(t.title)+'</div>';
+      h+='<div style="font-size:12px;color:var(--muted);margin-top:2px;line-height:1.5">'+esc(t.desc)+'</div>';
+      h+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">';
+      var locInfo=locI(t.location);
+      h+='<span class="bdg '+bc(locInfo.c)+'" style="font-size:10px">'+locInfo.l+'</span>';
+      t.plants.slice(0,4).forEach(function(p){h+='<span class="bdg" style="background:#F5F3EF;color:var(--muted);font-size:10px">'+esc(p.name)+'</span>'});
+      if(t.plants.length>4)h+='<span class="bdg" style="background:#F5F3EF;color:var(--muted);font-size:10px">+\u2009'+(t.plants.length-4)+'</span>';
+      h+='</div></div></div>';
+    });
+  }
+
+  // Mini aperçu annuel
+  h+='<div style="margin-top:16px"><div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Aper\u00e7u annuel</div>';
+  h+='<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px">';
+  for(var mi=0;mi<12;mi++){
+    var mt=getTasksForMonth(mi);
+    var isCur=mi===curMonth;
+    var isView=mi===calViewMonth;
+    var cnt=mt.length;
+    var bgC=cnt===0?'#F5F3EF':cnt<=2?'var(--green-l)':cnt<=4?'var(--accent-l)':'var(--red-l)';
+    var brC=isView?'2px solid var(--accent)':isCur?'2px solid var(--green)':'1.5px solid var(--brd)';
+    h+='<div data-calgo="'+mi+'" style="text-align:center;padding:6px 2px;border-radius:8px;background:'+bgC+';border:'+brC+';cursor:pointer">';
+    h+='<div style="font-size:10px;font-weight:'+(isCur||isView?'700':'500')+';color:'+(isView?'var(--accent)':isCur?'var(--green)':'var(--muted)')+'">'+MONTHS[mi].substring(0,3)+'</div>';
+    h+='<div style="font-size:12px;font-weight:700;margin-top:1px;color:'+(cnt===0?'var(--muted)':'var(--txt)')+'">'+cnt+'</div>';
+    h+='</div>';
+  }
+  h+='</div>';
+  h+='<div style="display:flex;gap:8px;margin-top:6px;justify-content:center">';
+  h+='<span style="font-size:10px;color:var(--muted)">\ud83d\udfe2 1-2</span>';
+  h+='<span style="font-size:10px;color:var(--muted)">\ud83d\udfe0 3-4</span>';
+  h+='<span style="font-size:10px;color:var(--muted)">\ud83d\udd34 5+</span>';
+  h+='</div></div>';
+
+  h+='</div></div>';
+  return h;
+}
+
+// ── State ──
+var V='home',SI=null,GS=null,GM=false,PF='all',PS='',CF='all',CT='watering',PSORT='name';
+
+function R(){
+  if(!currentUser){showLogin();return;}
+  if(!dataLoaded){
+    var a=document.getElementById('app');
+    a.innerHTML='<div class="empty" style="padding-top:120px"><div style="font-size:48px;margin-bottom:12px">\ud83c\udf4b</div><div style="font-size:14px">Chargement des donn\u00e9es...</div></div>';
+    return;
+  }
+  var a=document.getElementById('app');
+  if(V==='home')a.innerHTML=rH();
+  else if(V==='greenhouse')a.innerHTML=rG();
+  else if(V==='plants')a.innerHTML=rP();
+  else if(V==='care')a.innerHTML=rC();
+  else if(V==='settings')a.innerHTML=rS();
+  else if(V==='detail')a.innerHTML=rD();
+  else if(V==='diag')a.innerHTML=rDiag();
+  else if(V==='cal')a.innerHTML=rCal();
+  else if(V==='share')a.innerHTML=rSharePage();
+  rN();
+}
+
+function rN(){
+  var o=document.querySelector('.nav');if(o)o.remove();
+  if(V==='detail'||V==='diag'||V==='cal'||V==='share')return;
+  var n=document.createElement('nav');n.className='nav';
+  [{id:'home',i:'\ud83c\udfe0',l:'Accueil'},{id:'greenhouse',i:'\ud83c\udfe1',l:'Serre'},{id:'plants',i:'\ud83c\udf3f',l:'Plantes'},{id:'care',i:'\ud83d\udcc5',l:'Soins'},{id:'settings',i:'\u2699\ufe0f',l:'R\u00e9glages'}].forEach(function(t){
+    var b=document.createElement('button');b.className='nav-b'+(V===t.id?' on':'');
+    b.innerHTML='<span style="font-size:20px">'+t.i+'</span>'+t.l;
+    b.addEventListener('click',function(){V=t.id;GS=null;GM=false;R();window.scrollTo(0,0)});
+    n.appendChild(b);
+  });
+  document.body.appendChild(n);
+}
+
+// ── HOME ──
+function rH(){
+  var w=nw(),rc=D.careLogs.slice().sort(function(a,b){return b.date.localeCompare(a.date)}).slice(0,5);
+  var s=D.plants.filter(function(p){return p.location==='serre'}).length;
+  var po=D.plants.filter(function(p){return p.location==='pot'}).length;
+  var t=D.plants.filter(function(p){return p.location==='pleine_terre'}).length;
+  var h='<div class="hdr"><div class="fb"><div><div style="font-size:22px;margin-bottom:2px">\ud83c\udf4b</div><h1>Mon Jardin d\'Agrumes</h1><div class="hdr-sub">'+D.plants.length+' plante'+(D.plants.length>1?'s':'')+' \u2022 '+D.careLogs.length+' soin'+(D.careLogs.length>1?'s':'')+'</div></div></div>';
+  if(currentUser){
+    h+='<div class="user-bar">'+(currentUser.photoURL?'<img src="'+currentUser.photoURL+'" alt="">':'')+'<span>'+esc(currentUser.displayName||currentUser.email)+'</span></div>';
+  }
+  h+='</div><div class="sec">';
+
+  h+='<div class="sg" style="margin-bottom:16px">';
+  h+='<div class="cd sc" data-go="greenhouse"><div style="color:var(--accent)">\ud83c\udfe0</div><div class="sn" style="color:var(--accent)">'+s+'</div><div class="sl">En serre</div></div>';
+  h+='<div class="cd sc" data-go="plants-pot"><div style="color:var(--blue)">\ud83e\udeb4</div><div class="sn" style="color:var(--blue)">'+po+'</div><div class="sl">En pot</div></div>';
+  h+='<div class="cd sc" data-go="plants-terre"><div style="color:var(--green)">\ud83c\udf31</div><div class="sn" style="color:var(--green)">'+t+'</div><div class="sl">Pleine terre</div></div></div>';
+
+  // Frost alerts
+  h+=rFrostBanner();
+
+  // Weather summary
+  h+=rWeatherSummary();
+
+  // Diagnostic carence shortcut
+  h+='<div class="cd" style="background:linear-gradient(135deg,#FFF8F0,#FFF3E0);border:1.5px solid rgba(232,130,12,.2);cursor:pointer" data-go="diag"><div class="fc" style="gap:12px"><div style="width:48px;height:48px;border-radius:14px;background:var(--accent);display:flex;align-items:center;justify-content:center"><span style="font-size:24px">\ud83e\ude7a</span></div><div class="g1"><div style="font-size:15px;font-weight:700;color:var(--txt)">Diagnostic des carences</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Feuilles jaunes ? D\u00e9cris les sympt\u00f4mes, je t\'aide \u00e0 trouver la cause</div></div><span style="font-size:18px;color:var(--accent)">\u203a</span></div></div>';
+
+  // Calendrier tâches shortcut
+  var calNow=getTasksForMonth(new Date().getMonth());
+  var calHigh=calNow.filter(function(t){return t.priority==='haute'}).length;
+  h+='<div class="cd" style="background:linear-gradient(135deg,#F0F7F2,#E8F0EA);border:1.5px solid rgba(74,124,89,.2);cursor:pointer" data-go="cal"><div class="fc" style="gap:12px"><div style="width:48px;height:48px;border-radius:14px;background:var(--green);display:flex;align-items:center;justify-content:center"><span style="font-size:24px">\ud83d\udcc5</span></div><div class="g1"><div style="font-size:15px;font-weight:700;color:var(--txt)">Calendrier des t\u00e2ches</div><div style="font-size:12px;color:var(--muted);margin-top:2px">'+calNow.length+' t\u00e2che'+(calNow.length>1?'s':'') +' ce mois-ci'+(calHigh?' dont '+calHigh+' prioritaire'+(calHigh>1?'s':''):'')+'</div></div><span style="font-size:18px;color:var(--green)">\u203a</span></div></div>';
+
+  if(w.length){
+    h+='<div class="cd" style="background:var(--blue-l);border:1.5px solid rgba(41,128,185,.2)"><div class="fc" style="gap:8px;margin-bottom:8px"><span style="font-size:20px">\ud83d\udca7</span><strong style="color:var(--blue)">Arrosage \u00e0 pr\u00e9voir</strong></div>';
+    h+='<div style="font-size:13px;margin-bottom:10px">'+w.length+' plante'+(w.length>1?'s ont':' a')+' besoin d\'eau !</div><div style="display:flex;flex-wrap:wrap;gap:6px">';
+    w.slice(0,6).forEach(function(p){h+='<button class="bs bs-a" data-qw="'+p.id+'">'+esc(p.name)+' \u2713</button>'});
+    h+='</div></div>';
+  }
+
+  // Repot alerts
+  h+=rRepotBanner();
+
+  // Fertilization advice
+  h+=rFertSection();
+
+  if(rc.length){
+    h+='<div class="fb" style="margin:12px 0 8px"><h3 style="font-size:16px">Activit\u00e9 r\u00e9cente</h3><button class="bs bs-a" data-go="care">Tout voir</button></div>';
+    rc.forEach(function(log){
+      var pl=D.plants.find(function(p){return p.id===log.plantId});
+      h+='<div class="ri"><span style="font-size:18px">'+TE[log.type]+'</span><div class="g1"><div style="font-size:13px;font-weight:600">'+esc(pl?pl.name:'?')+' \u2014 '+TL[log.type]+'</div><div style="font-size:11px;color:var(--muted)">'+fd(log.date)+(log.fertilizerType?' \u2022 '+esc(log.fertilizerType):'')+(log.fruitCount?' \u2022 '+log.fruitCount+' fruits':'')+'</div></div></div>';
+    });
+  }
+
+  // Partage collection
+  if(D.plants.length>=1){
+    h+='<div class="cd" style="background:linear-gradient(135deg,#F0F0FA,#E8E4F8);border:1.5px solid rgba(100,80,160,.15);cursor:pointer;margin-top:8px" data-go="share"><div class="fc" style="gap:12px"><div style="width:48px;height:48px;border-radius:14px;background:#7C6BC4;display:flex;align-items:center;justify-content:center"><span style="font-size:24px">\ud83d\udce4</span></div><div class="g1"><div style="font-size:15px;font-weight:700;color:var(--txt)">Partager ma collection</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Montre tes '+D.plants.length+' agrume'+(D.plants.length>1?'s':'')+' \u00e0 d\'autres passionn\u00e9s</div></div><span style="font-size:18px;color:#7C6BC4">\u203a</span></div></div>';
+  }
+
+  if(!D.plants.length){
+    h+='<div class="empty"><div style="font-size:48px;margin-bottom:12px">\ud83c\udf31</div><div style="font-size:16px;font-weight:600;margin-bottom:6px">C\'est encore vide ici !</div><div style="font-size:13px">Ajoute ta premi\u00e8re plante</div><button class="btn btn-p" style="margin-top:16px" data-do="add-plant">\uff0b Ajouter un agrume</button></div>';
+  }
+  return h+'</div>';
+}
+
+// ── GREENHOUSE ──
+function rG(){
+  var gh=D.greenhouse;
+  var h='<div class="hdr"><h1>\ud83c\udfe0 Ma Serre</h1><div class="hdr-sub">Touche une case pour placer ou voir une plante</div></div><div class="sec">';
+  h+='<div class="fc jc" style="gap:8px;margin-bottom:16px;flex-wrap:wrap"><span style="font-size:12px;color:var(--muted)">Taille :</span>';
+  h+='<button class="bs bs-a" data-rsz="w-">\u2212Col</button><span style="font-size:13px;font-weight:600">'+gh.width+' \u00d7 '+gh.height+'</span><button class="bs bs-a" data-rsz="w+">+Col</button>';
+  h+='<button class="bs bs-a" data-rsz="h-">\u2212Rang</button><button class="bs bs-a" data-rsz="h+">+Rang</button></div>';
+  h+='<div class="cd" style="padding:12px;overflow-x:auto"><div class="gg" style="grid-template-columns:repeat('+gh.width+',1fr);min-width:'+gh.width*60+'px">';
+  for(var r=0;r<gh.height;r++)for(var c=0;c<gh.width;c++){
+    var k=r+'-'+c,pid=gh.positions[k],pl=pid?D.plants.find(function(p){return p.id===pid}):null;
+    h+='<div class="gc'+(pl?' hp':'')+(GS===k?' sel':'')+'" data-cell="'+k+'">'+(pl?'<span style="font-size:18px">\ud83c\udf4a</span><span style="line-height:1.1;margin-top:2px">'+esc(pl.name)+'</span>':'<span style="font-size:16px;opacity:.3">+</span>')+'</div>';
+  }
+  h+='</div></div>';
+  if(GM&&GS){
+    var sp=D.plants.filter(function(p){return p.location==='serre'}),ai=Object.values(gh.positions);
+    h+='<div class="cd" style="margin-top:12px;border:2px solid var(--accent)"><div style="font-weight:600;margin-bottom:8px">Placer une plante ici :</div>';
+    if(gh.positions[GS])h+='<button class="bs bs-r" style="margin-bottom:8px" data-grem="'+GS+'">Retirer</button>';
+    var av=sp.filter(function(p){return ai.indexOf(p.id)<0||gh.positions[GS]===p.id});
+    if(av.length){h+='<div style="display:flex;flex-wrap:wrap;gap:6px">';av.forEach(function(p){h+='<button class="bs bs-g" data-gput="'+p.id+'">\ud83c\udf4a '+esc(p.name)+'</button>'});h+='</div>';}
+    else h+='<div style="font-size:12px;color:var(--muted)">Toutes les plantes serre sont plac\u00e9es</div>';
+    h+='<button class="bs bs-n" style="margin-top:8px" data-gcan>Annuler</button></div>';
+  }
+  return h+'</div>';
+}
+
+// ── PLANTS ──
+function rP(){
+  var fl=D.plants.filter(function(p){return PF==='all'||p.location===PF}).filter(function(p){return !PS||p.name.toLowerCase().indexOf(PS.toLowerCase())>=0||(p.variety||'').toLowerCase().indexOf(PS.toLowerCase())>=0});
+
+  // Tri
+  if(PSORT==='name')fl.sort(function(a,b){return a.name.localeCompare(b.name)});
+  else if(PSORT==='rust')fl.sort(function(a,b){return (parseInt(a.rusticity)||0)-(parseInt(b.rusticity)||0)});
+  else if(PSORT==='rootstock')fl.sort(function(a,b){return (a.rootstock||'ZZZ').localeCompare(b.rootstock||'ZZZ')});
+
+  var h='<div class="hdr"><div class="fb"><h1>\ud83c\udf3f Mes Agrumes</h1><button class="btn btn-w" style="padding:8px 14px;font-size:13px" data-do="add-plant">\uff0b Ajouter</button></div></div><div class="sec">';
+  h+='<input class="inp" style="margin-bottom:12px" placeholder="\ud83d\udd0d Rechercher..." value="'+esc(PS)+'" data-search>';
+
+  // Filtres emplacement
+  h+='<div style="display:flex;gap:6px;margin-bottom:10px;overflow-x:auto"><button class="bs '+(PF==='all'?'bs-a':'bs-n')+'" data-pf="all" style="white-space:nowrap">Tous</button>';
+  LOCS.forEach(function(l){h+='<button class="bs '+(PF===l.v?'bs-a':'bs-n')+'" data-pf="'+l.v+'" style="white-space:nowrap">'+l.l+'</button>'});
+  h+='</div>';
+
+  // Tri
+  var SORTS=[{v:'name',l:'\ud83d\udcda A\u2192Z'},{v:'rust',l:'\u2744\ufe0f Rusticit\u00e9'},{v:'rootstock',l:'\ud83c\udf33 Porte-greffe'}];
+  h+='<div style="display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;align-items:center"><span style="font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap">Trier :</span>';
+  SORTS.forEach(function(s){h+='<button class="bs '+(PSORT===s.v?'bs-g':'bs-n')+'" data-psort="'+s.v+'" style="white-space:nowrap;font-size:11px">'+s.l+'</button>'});
+  h+='</div>';
+
+  if(!fl.length)h+='<div class="empty"><div style="font-size:40px">\ud83d\udd0d</div><div style="font-size:14px;margin-top:8px">Aucune plante trouv\u00e9e</div></div>';
+  else{
+    // Info de tri visible
+    h+='<div style="font-size:11px;color:var(--muted);margin-bottom:8px">'+fl.length+' plante'+(fl.length>1?'s':'')+' affich\u00e9e'+(fl.length>1?'s':'')+'</div>';
+    fl.forEach(function(p){
+      var lo=locI(p.location),la=D.careLogs.filter(function(c){return c.plantId===p.id}).sort(function(a,b){return b.date.localeCompare(a.date)})[0];
+      h+='<div class="cd" data-see="'+p.id+'" style="display:flex;gap:12px;align-items:center;cursor:pointer">'+(p.photo?'<img src="'+p.photo+'" style="width:44px;height:44px;border-radius:10px;object-fit:cover">':'<div style="font-size:32px">\ud83c\udf4a</div>')+'<div class="g1"><div style="font-weight:700;font-size:15px">'+esc(p.name)+'</div>';
+      if(p.variety)h+='<div style="font-size:12px;color:var(--muted)">'+esc(p.variety)+'</div>';
+      h+='<div style="display:flex;gap:6px;margin-top:4px"><span class="bdg '+bc(lo.c)+'">'+lo.l+'</span>'+(p.rusticity?'<span class="bdg bdg-b">\u2744\ufe0f '+p.rusticity+'\u00b0C</span>':'')+'</div></div>';
+      // Info contextuelle selon le tri actif
+      var sortInfo='';
+      if(PSORT==='rust')sortInfo=(p.rusticity||'?')+'\u00b0C';
+      else if(PSORT==='rootstock')sortInfo=esc(p.rootstock)||'\u2014';
+      else sortInfo=la?fd(la.date):'';
+      h+='<div style="text-align:right;font-size:11px;color:var(--muted)">'+sortInfo+'</div></div>';
+    });
+  }
+  return h+'</div>';
+}
+
+// ── DETAIL ──
+function rD(){
+  var p=D.plants.find(function(x){return x.id===SI});
+  if(!p){V='plants';R();return '';}
+  var logs=D.careLogs.filter(function(l){return l.plantId===p.id}).sort(function(a,b){return b.date.localeCompare(a.date)});
+  var lo=locI(p.location),tf=0,fc=0,lw=null;
+  logs.forEach(function(l){if(l.type==='fruit')tf+=parseInt(l.fruitCount)||0;if(l.type==='fertilizer')fc++;if(l.type==='watering'&&!lw)lw=l});
+  var h='<div class="hdr" style="padding-top:max(14px,env(safe-area-inset-top))"><button data-go="plants" style="background:none;border:none;cursor:pointer;color:#fff;font-size:14px;margin-bottom:8px;padding:0;font-family:inherit">\u2190 Retour</button>';
+  h+='<div class="fc" style="gap:12px">'+(p.photo?'<img src="'+p.photo+'" style="width:56px;height:56px;border-radius:14px;object-fit:cover;border:2px solid rgba(255,255,255,.3)">':'<div style="font-size:40px">\ud83c\udf4a</div>')+'<div><h1 style="font-size:24px">'+esc(p.name)+'</h1>'+(p.variety?'<div style="opacity:.8;font-size:14px">'+esc(p.variety)+'</div>':'')+'</div></div></div><div class="sec">';
+  h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"><span class="bdg '+bc(lo.c)+'">'+lo.l+'</span><span class="bdg bdg-b">\u2744\ufe0f '+(p.rusticity||'?')+'\u00b0C</span><div class="g1"></div><button class="bs bs-a" data-do="edit-plant">\u270f\ufe0f Modifier</button><button class="bs bs-r" data-xp="'+p.id+'">\ud83d\uddd1\ufe0f</button></div>';
+
+  // Repot indicator for pot/serre plants
+  if(p.location!=='pleine_terre'&&p.purchaseDate){
+    var _now=new Date(),_ref=new Date(p.purchaseDate+'T00:00:00'),_lastR=null;
+    logs.forEach(function(l){if(l.notes&&l.notes.toLowerCase().indexOf('rempot')>=0){if(!_lastR||l.date>_lastR)_lastR=l.date}});
+    if(_lastR)_ref=new Date(_lastR+'T00:00:00');
+    var _yrs=Math.round((_now-_ref)/(365.25*864e5)*10)/10;
+    if(_yrs>=2){
+      var _col=_yrs>=3?'var(--red)':'var(--accent)';var _bg=_yrs>=3?'var(--red-l)':'var(--accent-l)';
+      var _lbl=_yrs>=3?'Rempotage urgent !':'Rempotage \u00e0 pr\u00e9voir bient\u00f4t';
+      h+='<div class="cd" style="background:'+_bg+';border:1.5px solid '+_col+'30;padding:12px"><div class="fc" style="gap:8px"><span style="font-size:18px">\ud83e\udeb4</span><div><div style="font-size:13px;font-weight:700;color:'+_col+'">'+_lbl+'</div><div style="font-size:12px;color:var(--muted)">Dernier rempotage il y a ~'+_yrs+' an'+(_yrs>1?'s':'')+'. Les agrumes en pot se rempotent tous les 2-3 ans au printemps.</div></div></div></div>';
+    }
+  }
+
+  if(p.photo){h+='<div class="cd" style="padding:8px"><img src="'+p.photo+'" style="width:100%;border-radius:12px;max-height:250px;object-fit:cover"></div>';}
+
+  h+='<div class="cd"><h3 style="margin:0 0 12px;font-size:15px">\ud83d\udccb Fiche</h3>';
+  var harv=fmtHarvest(p);
+  var infoRows=[{l:'Date d\'achat',v:fd(p.purchaseDate)},{l:'P\u00e9pini\u00e8re',v:esc(p.nursery)||'\u2014'},{l:'Porte-greffe',v:esc(p.rootstock)||'\u2014'},{l:'Rusticit\u00e9',v:(p.rusticity||'?')+'\u00b0C'}];
+  if(harv)infoRows.push({l:'R\u00e9colte',v:harv});
+  infoRows.forEach(function(r){h+='<div class="ir"><span style="color:var(--muted)">'+r.l+'</span><span style="font-weight:600">'+r.v+'</span></div>'});
+  if(p.usage&&p.usage.length){h+='<div style="margin-top:10px"><span style="font-size:12px;color:var(--muted);font-weight:600">UTILISATION</span><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">';p.usage.forEach(function(u){h+='<span class="bdg bdg-a">'+esc(u)+'</span>'});h+='</div></div>';}
+  if(p.notes)h+='<div style="margin-top:10px;font-size:13px;color:var(--muted);font-style:italic">'+esc(p.notes)+'</div>';
+  h+='</div>';
+  h+='<div class="sg" style="margin:12px 0"><div class="cd" style="text-align:center;padding:10px"><div class="sl">Arrosage</div><div style="font-size:13px;font-weight:700;margin-top:4px;color:var(--blue)">'+(lw?fd(lw.date):'\u2014')+'</div></div>';
+  h+='<div class="cd" style="text-align:center;padding:10px"><div class="sl">Engrais</div><div style="font-size:13px;font-weight:700;margin-top:4px;color:var(--green)">'+fc+' fois</div></div>';
+  h+='<div class="cd" style="text-align:center;padding:10px"><div class="sl">Fruits</div><div style="font-size:13px;font-weight:700;margin-top:4px;color:var(--accent)">'+tf+'</div></div></div>';
+  h+='<button class="btn btn-p w100 jc" style="margin-bottom:16px" data-do="add-care-plant">\uff0b Ajouter un soin</button>';
+  h+='<h3 style="margin:0 0 10px;font-size:15px">\ud83d\udcc5 Historique</h3>';
+  if(!logs.length)h+='<div class="cd" style="text-align:center;color:var(--muted);font-size:13px">Aucun soin</div>';
+  else logs.forEach(function(l){
+    h+='<div class="cd" style="padding:12px;display:flex;gap:10px;align-items:flex-start"><span style="font-size:22px;margin-top:2px">'+TE[l.type]+'</span><div class="g1"><div class="fb"><span style="font-weight:600;font-size:13px">'+TL[l.type]+'</span><span style="font-size:12px;color:var(--muted)">'+fd(l.date)+'</span></div>';
+    if(l.fertilizerType)h+='<div style="font-size:12px;margin-top:2px">'+esc(l.fertilizerType)+'</div>';
+    if(l.fertilizerAmount)h+='<div style="font-size:12px">Dose: '+esc(l.fertilizerAmount)+'</div>';
+    if(l.fruitCount)h+='<div style="font-size:12px">\ud83c\udf4a '+l.fruitCount+' fruits</div>';
+    if(l.notes)h+='<div style="font-size:12px;color:var(--muted);margin-top:4px;font-style:italic">'+esc(l.notes)+'</div>';
+    h+='</div><button class="bs bs-r" data-xc="'+l.id+'" style="padding:4px 8px;font-size:11px">\u2715</button></div>';
+  });
+  return h+'</div>';
+}
+
+// ── CARE ──
+function rC(){
+  var logs=D.careLogs.slice().filter(function(l){return CF==='all'||l.type===CF}).sort(function(a,b){return b.date.localeCompare(a.date)});
+  var h='<div class="hdr"><div class="fb"><h1>\ud83d\udcc5 Suivi des soins</h1><button class="btn btn-w" style="padding:8px 14px;font-size:13px" data-do="add-care">\uff0b Ajouter</button></div></div><div class="sec">';
+  h+='<div style="display:flex;gap:6px;margin-bottom:16px;overflow-x:auto">';
+  [{id:'all',l:'Tous'},{id:'watering',l:'\ud83d\udca7 Arrosage'},{id:'fertilizer',l:'\ud83e\uddea Engrais'},{id:'fruit',l:'\ud83c\udf4a Fruits'}].forEach(function(t){
+    h+='<button class="bs '+(CF===t.id?'bs-a':'bs-n')+'" data-cf="'+t.id+'" style="white-space:nowrap">'+t.l+'</button>'});
+  h+='</div>';
+  if(!logs.length)h+='<div class="empty"><div style="font-size:40px">\ud83d\udcdd</div><div style="font-size:14px;margin-top:8px">Aucun soin</div></div>';
+  else logs.forEach(function(l){
+    var pl=D.plants.find(function(p){return p.id===l.plantId});
+    h+='<div class="cd" style="padding:12px;display:flex;gap:10px"><span style="font-size:22px">'+TE[l.type]+'</span><div class="g1"><div class="fb"><span style="font-weight:600;font-size:14px">'+esc(pl?pl.name:'?')+'</span><span style="font-size:12px;color:var(--muted)">'+fd(l.date)+'</span></div>';
+    h+='<div style="font-size:12px;color:var(--muted)">'+TL[l.type]+'</div>';
+    if(l.fertilizerType)h+='<div style="font-size:12px;margin-top:2px">'+esc(l.fertilizerType)+(l.fertilizerAmount?' \u2014 '+esc(l.fertilizerAmount):'')+'</div>';
+    if(l.fruitCount)h+='<div style="font-size:12px">\ud83c\udf4a '+l.fruitCount+' fruits</div>';
+    if(l.notes)h+='<div style="font-size:12px;color:var(--muted);font-style:italic;margin-top:2px">'+esc(l.notes)+'</div>';
+    h+='</div></div>';
+  });
+  return h+'</div>';
+}
+
+// ── SETTINGS ──
+function rS(){
+  var s=D.settings;
+  var h='<div class="hdr"><h1>\u2699\ufe0f R\u00e9glages</h1></div><div class="sec">';
+  if(currentUser){
+    h+='<div class="cd"><h3 style="margin:0 0 12px;font-size:15px">\ud83d\udc64 Compte</h3><div class="fc" style="gap:10px;margin-bottom:12px">'+(currentUser.photoURL?'<img src="'+currentUser.photoURL+'" style="width:36px;height:36px;border-radius:50%">':'')+'<div><div style="font-weight:600;font-size:14px">'+esc(currentUser.displayName||'')+'</div><div style="font-size:12px;color:var(--muted)">'+esc(currentUser.email||'')+'</div></div></div>';
+    h+='<div style="font-size:12px;color:var(--green);margin-bottom:10px">\u2705 Donn\u00e9es synchronis\u00e9es sur tous tes appareils</div>';
+    h+='<button class="bs bs-n" data-do="signout">Se d\u00e9connecter</button></div>';
+  }
+  h+='<div class="cd"><h3 style="margin:0 0 16px;font-size:15px">\ud83d\udca7 Rappels d\'arrosage</h3>';
+  h+='<div class="fb" style="margin-bottom:12px"><span style="font-size:14px">Activer les rappels</span><button class="tgl'+(s.wateringReminder?' on':'')+'" data-tgl="wateringReminder"><div class="tgl-k"></div></button></div>';
+  h+='<div class="fld"><label class="lbl">Intervalle : '+(s.wateringInterval||3)+' jour(s)</label><input type="range" min="1" max="14" value="'+(s.wateringInterval||3)+'" data-rng="wateringInterval" style="width:100%"></div></div>';
+  h+='<div class="cd"><h3 style="margin:0 0 16px;font-size:15px">\ud83c\udf24\ufe0f Alertes gel</h3>';
+  h+='<div class="fb" style="margin-bottom:12px"><span style="font-size:14px">Activer les alertes</span><button class="tgl'+(s.weatherAlerts?' on':'')+'" data-tgl="weatherAlerts"><div class="tgl-k"></div></button></div>';
+  h+='<div class="fld"><label class="lbl">Ville</label><input class="inp" id="wcity" value="'+esc(s.weatherCity||'Paris')+'" placeholder="Ex: Lyon, Marseille..."></div>';
+  h+='<div style="display:flex;gap:8px"><div class="fld" style="flex:1"><label class="lbl">Latitude</label><input class="inp" id="wlat" value="'+(s.weatherLat||48.86)+'" type="number" step="0.01"></div>';
+  h+='<div class="fld" style="flex:1"><label class="lbl">Longitude</label><input class="inp" id="wlon" value="'+(s.weatherLon||2.35)+'" type="number" step="0.01"></div></div>';
+  h+='<button class="bs bs-a" data-do="save-weather">\ud83d\udccd Enregistrer la localisation</button>';
+  h+='<div style="font-size:11px;color:var(--muted);margin-top:8px">Astuce : cherche les coordonn\u00e9es de ta ville sur Google Maps (clic droit \u2192 coordonn\u00e9es)</div>';
+  h+='<button class="bs bs-n" style="margin-top:8px" data-do="geo">\ud83d\udce1 Utiliser ma position actuelle</button>';
+  h+='</div>';
+  h+='<div class="cd"><h3 style="margin:0 0 12px;font-size:15px">\ud83d\udcca Donn\u00e9es</h3><div style="font-size:13px;margin-bottom:12px">'+D.plants.length+' plante(s) \u2022 '+D.careLogs.length+' soin(s)</div><button class="bs bs-r" data-do="reset">\ud83d\uddd1\ufe0f Tout r\u00e9initialiser</button></div>';
+  h+='<div class="cd" style="background:var(--accent-l);text-align:center"><div style="font-size:24px;margin-bottom:4px">\ud83c\udf4b</div><div style="font-size:13px;font-weight:600">Mon Jardin d\'Agrumes</div><div style="font-size:11px;color:var(--muted)">v4.0 \u2022 Complet : Diagnostic, Calendrier, Tri, Rempotage, Partage</div></div></div>';
+  return h;
+}
+
+// ── MODALS ──
+function mPlant(p){
+  var ed=!!p;p=p||{id:gid(),name:'',variety:'',location:'serre',purchaseDate:td(),nursery:'',rootstock:'',rusticity:'-8',notes:'',harvestStart:'',harvestEnd:'',usage:[],photo:''};
+  var ov=document.createElement('div');ov.className='mo';ov.id='modal';
+  ov.innerHTML='<div class="mc"><div class="fb" style="margin-bottom:16px"><h2 style="font-size:20px">'+(ed?'Modifier':'Ajouter un agrume')+'</h2><button data-cls style="background:none;border:none;cursor:pointer;font-size:20px">\u2715</button></div>'
+    +'<div class="fld"><label class="lbl">Nom / Vari\u00e9t\u00e9 *</label><input class="inp" id="fn" value="'+esc(p.name)+'"></div>'
+    +'<div class="fld"><label class="lbl">Sous-vari\u00e9t\u00e9</label><input class="inp" id="fv" value="'+esc(p.variety)+'"></div>'
+    +'<div class="fld"><label class="lbl">Emplacement</label><select class="sel" id="fl">'+LOCS.map(function(l){return '<option value="'+l.v+'"'+(p.location===l.v?' selected':'')+'>'+l.l+'</option>'}).join('')+'</select></div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="fld"><label class="lbl">Date d\'achat</label><input type="date" class="inp" id="fd" value="'+p.purchaseDate+'"></div>'
+    +'<div class="fld"><label class="lbl">Rusticit\u00e9</label><select class="sel" id="fr">'+RUST.map(function(r){return '<option value="'+r.v+'"'+(p.rusticity===r.v?' selected':'')+'>'+r.l+'</option>'}).join('')+'</select></div></div>'
+    +'<div class="fld"><label class="lbl">P\u00e9pini\u00e8re</label><input class="inp" id="fp" value="'+esc(p.nursery)+'"></div>'
+    +'<div class="fld"><label class="lbl">Porte-greffe</label><input class="inp" id="fg" value="'+esc(p.rootstock)+'"></div>'
+    +'<div class="fld"><label class="lbl">P\u00e9riode de r\u00e9colte</label><div style="display:flex;gap:8px;align-items:center"><select class="sel" id="fhs" style="flex:1">'+('<option value="">D\u00e9but...</option>'+MONTHS.map(function(m,i){return '<option value="'+i+'"'+((p.harvestStart||'')===''+i?' selected':'')+'>'+m+'</option>'}).join(''))+'</select><span style="color:var(--muted)">\u2192</span><select class="sel" id="fhe" style="flex:1">'+('<option value="">Fin...</option>'+MONTHS.map(function(m,i){return '<option value="'+i+'"'+((p.harvestEnd||'')===''+i?' selected':'')+'>'+m+'</option>'}).join(''))+'</select></div></div>'
+    +'<div class="fld"><label class="lbl">Utilisation</label><div style="display:flex;flex-wrap:wrap;gap:6px" id="fu-tags">'+USAGES.map(function(u){var sel=(p.usage||[]).indexOf(u)>=0;return '<button class="tag'+(sel?' on':'')+'" data-utag="'+esc(u)+'" style="'+(sel?'background:var(--accent-l);color:var(--accent);border-color:rgba(232,130,12,.3)':'')+'">'+esc(u)+'</button>'}).join('')+'</div></div>'
+    +'<div class="fld"><label class="lbl">Photo</label><div style="display:flex;gap:10px;align-items:center">'+(p.photo?'<img src="'+p.photo+'" style="width:60px;height:60px;border-radius:10px;object-fit:cover">':'')+'<label class="bs bs-a" style="cursor:pointer">\ud83d\udcf7 '+(p.photo?'Changer':'Ajouter une photo')+'<input type="file" accept="image/*" id="fph" style="display:none"></label>'+(p.photo?'<button class="bs bs-r" data-rmphoto>Supprimer</button>':'')+'</div><input type="hidden" id="fphval" value="'+(p.photo||'')+'"></div>'
+    +'<div class="fld"><label class="lbl">Notes</label><textarea class="inp" id="ft">'+esc(p.notes)+'</textarea></div>'
+    +'<div style="display:flex;gap:10px;margin-top:8px"><button class="btn btn-s" data-cls>Annuler</button><button class="btn btn-p g1 jc" data-svp="'+p.id+'" data-ed="'+ed+'">'+(ed?'Enregistrer':'Ajouter')+' \ud83c\udf4a</button></div></div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click',function(e){if(e.target===ov)cM()});
+}
+
+function mCare(pre){
+  var ov=document.createElement('div');ov.className='mo';ov.id='modal';
+  var plantsList=D.plants.map(function(p){
+    var lo=locI(p.location);
+    var sel=p.id===pre;
+    return '<div class="cd" data-cplant="'+p.id+'" style="padding:10px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;margin-bottom:6px;border:'+(sel?'2px solid var(--accent)':'1px solid var(--brd)')+';background:'+(sel?'var(--accent-l)':'var(--card)')+'"><div style="width:22px;height:22px;border-radius:6px;border:2px solid '+(sel?'var(--accent)':'var(--brd)')+';display:flex;align-items:center;justify-content:center;flex-shrink:0;background:'+(sel?'var(--accent)':'#fff')+'"><span style="color:#fff;font-size:14px;font-weight:700">'+(sel?'\u2713':'')+'</span></div>'
+      +(p.photo?'<img src="'+p.photo+'" style="width:32px;height:32px;border-radius:8px;object-fit:cover">':'<span style="font-size:22px">\ud83c\udf4a</span>')
+      +'<div class="g1"><div style="font-size:13px;font-weight:600">'+esc(p.name)+'</div><div style="font-size:11px;color:var(--muted)">'+lo.l+'</div></div></div>';
+  }).join('');
+
+  ov.innerHTML='<div class="mc"><div class="fb" style="margin-bottom:16px"><h2 style="font-size:20px">Nouveau soin</h2><button data-cls style="background:none;border:none;cursor:pointer;font-size:20px">\u2715</button></div>'
+    +'<div class="fld"><label class="lbl">Plantes *</label>'
+    +'<div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">'
+    +'<button class="bs bs-a" data-selall>Tout</button>'
+    +'<button class="bs bs-g" data-selloc="serre">\ud83c\udfe0 Serre</button>'
+    +'<button class="bs" style="background:var(--blue-l);color:var(--blue)" data-selloc="pot">\ud83e\udeb4 Pots</button>'
+    +'<button class="bs bs-g" data-selloc="pleine_terre">\ud83c\udf31 Pleine terre</button>'
+    +'<button class="bs bs-n" data-selnone>Aucun</button>'
+    +'</div>'
+    +'<div id="cp-list" style="max-height:200px;overflow-y:auto">'+plantsList+'</div></div>'
+    +'<div class="fld"><label class="lbl">Type de soin</label><div style="display:flex;flex-wrap:wrap;gap:8px" id="ctb"><button class="tag on" data-ct="watering" style="background:var(--blue-l);color:var(--blue)">\ud83d\udca7 Arrosage</button><button class="tag" data-ct="fertilizer">\ud83e\uddea Engrais</button><button class="tag" data-ct="fruit">\ud83c\udf4a Fructification</button><button class="tag" data-ct="other">\ud83d\udcdd Autre</button></div></div>'
+    +'<div class="fld"><label class="lbl">Date</label><input type="date" class="inp" id="cd" value="'+td()+'"></div>'
+    +'<div id="cex"></div>'
+    +'<div class="fld"><label class="lbl">Notes</label><textarea class="inp" id="cn"></textarea></div>'
+    +'<button class="btn btn-p w100 jc" style="margin-top:8px" data-svc>Enregistrer \u2713</button></div>';
+  document.body.appendChild(ov);CT='watering';
+  ov.addEventListener('click',function(e){if(e.target===ov)cM()});
+}
+
+function getSelectedPlants(){
+  var ids=[];
+  document.querySelectorAll('#cp-list [data-cplant]').forEach(function(el){
+    if(el.style.borderWidth==='2px'||el.style.border.indexOf('2px')>=0){
+      ids.push(el.getAttribute('data-cplant'));
+    }
+  });
+  return ids;
+}
+
+function togglePlantSelection(el){
+  var isOn=el.style.border.indexOf('var(--accent)')>=0;
+  if(isOn){
+    el.style.border='1px solid var(--brd)';el.style.background='var(--card)';
+    var chk=el.querySelector('div');chk.style.borderColor='var(--brd)';chk.style.background='#fff';chk.querySelector('span').textContent='';
+  } else {
+    el.style.border='2px solid var(--accent)';el.style.background='var(--accent-l)';
+    var chk=el.querySelector('div');chk.style.borderColor='var(--accent)';chk.style.background='var(--accent)';chk.querySelector('span').textContent='\u2713';
+  }
+}
+
+function selectPlantsByFilter(filter){
+  document.querySelectorAll('#cp-list [data-cplant]').forEach(function(el){
+    var pid=el.getAttribute('data-cplant');
+    var plant=D.plants.find(function(p){return p.id===pid});
+    var shouldSelect=false;
+    if(filter==='all')shouldSelect=true;
+    else if(filter==='none')shouldSelect=false;
+    else if(plant)shouldSelect=plant.location===filter;
+
+    if(shouldSelect){
+      el.style.border='2px solid var(--accent)';el.style.background='var(--accent-l)';
+      var chk=el.querySelector('div');chk.style.borderColor='var(--accent)';chk.style.background='var(--accent)';chk.querySelector('span').textContent='\u2713';
+    } else {
+      el.style.border='1px solid var(--brd)';el.style.background='var(--card)';
+      var chk=el.querySelector('div');chk.style.borderColor='var(--brd)';chk.style.background='#fff';chk.querySelector('span').textContent='';
+    }
+  });
+}
+
+function uCE(){
+  var x=document.getElementById('cex');if(!x)return;
+  if(CT==='fertilizer')x.innerHTML='<div class="fld"><label class="lbl">Type d\'engrais</label><select class="sel" id="cft"><option value="">Choisir...</option>'+FERTS.map(function(f){return '<option>'+f+'</option>'}).join('')+'</select></div><div class="fld"><label class="lbl">Quantit\u00e9</label><input class="inp" id="cfa" placeholder="Ex: 5g/L..."></div>';
+  else if(CT==='fruit')x.innerHTML='<div class="fld"><label class="lbl">Nombre de fruits</label><input type="number" class="inp" id="cfc"></div>';
+  else x.innerHTML='';
+}
+
+function cM(){var m=document.getElementById('modal');if(m)m.remove()}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function gv(id){var e=document.getElementById(id);return e?e.value.trim():''}
+
+function getUsageTags(){
+  var tags=[];
+  document.querySelectorAll('#fu-tags .tag.on').forEach(function(b){tags.push(b.getAttribute('data-utag'))});
+  return tags;
+}
+
+function compressPhoto(file,cb){
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var img=new Image();
+    img.onload=function(){
+      var c=document.createElement('canvas'),max=300;
+      var w=img.width,h=img.height;
+      if(w>h){if(w>max){h=h*max/w;w=max;}}else{if(h>max){w=w*max/h;h=max;}}
+      c.width=w;c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      cb(c.toDataURL('image/jpeg',0.6));
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function fmtHarvest(p){
+  if(p.harvestStart===''&&p.harvestEnd==='')return '';
+  var s=p.harvestStart!==''?MONTHS[parseInt(p.harvestStart)]:'?';
+  var e=p.harvestEnd!==''?MONTHS[parseInt(p.harvestEnd)]:'?';
+  return s+' \u2192 '+e;
+}
+
+// ── EVENTS ──
+document.addEventListener('click',function(e){
+  var t=e.target;
+
+  // Sign in
+  if(t.closest('[data-do="signin"]')){signIn();return;}
+
+  var go=t.closest('[data-go]');
+  if(go){var dest=go.getAttribute('data-go');
+    if(dest==='diag'){diagReset();V='diag';R();window.scrollTo(0,0);return;}
+    if(dest==='plants-pot'){PF='pot';V='plants';}
+    else if(dest==='plants-terre'){PF='pleine_terre';V='plants';}
+    else V=dest;
+    GS=null;GM=false;R();window.scrollTo(0,0);return;}
+
+  // Diagnostic answer
+  var dans=t.closest('[data-diagans]');
+  if(dans){var val=dans.getAttribute('data-diagans');
+    var q=DIAG_QUESTIONS[diagStep];
+    diagAnswers[q.id]=val;
+    diagStep++;
+    if(diagStep>=DIAG_QUESTIONS.length)diagCalculate();
+    R();window.scrollTo(0,0);return;}
+
+  // Diagnostic info detail (other carences)
+  var dinfo=t.closest('[data-diaginfo]');
+  if(dinfo){var cid=dinfo.getAttribute('data-diaginfo');
+    var car=CARENCES.find(function(c){return c.id===cid});
+    if(car){
+      var urgColors={haute:'var(--red)',moyenne:'var(--accent)',faible:'var(--green)'};
+      var urgTxt={haute:'Urgente',moyenne:'Mod\u00e9r\u00e9e',faible:'Faible'};
+      var ov=document.createElement('div');ov.className='mo';ov.id='modal';
+      ov.innerHTML='<div class="mc"><div class="fb" style="margin-bottom:16px"><h2 style="font-size:18px">'+car.emoji+' '+esc(car.name)+'</h2><button data-cls style="background:none;border:none;cursor:pointer;font-size:20px">\u2715</button></div>'
+        +'<div class="cd" style="margin-bottom:12px"><div style="font-size:13px;font-weight:700;margin-bottom:6px">\ud83e\uddd0 Cause</div><div style="font-size:13px;line-height:1.6">'+esc(car.cause)+'</div></div>'
+        +'<div class="cd" style="background:var(--green-l);border:1.5px solid rgba(74,124,89,.2)"><div style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--green)">\u2705 Solution</div><div style="font-size:13px;line-height:1.6">'+esc(car.solution)+'</div></div>'
+        +'<div style="margin-top:12px"><div style="font-size:13px;font-weight:700;margin-bottom:6px">\ud83d\udd0d Sympt\u00f4mes typiques</div>';
+      car.symptoms.forEach(function(s){ov.querySelector('.mc').innerHTML+='<div style="font-size:13px;padding:3px 0">\u2022 '+esc(s)+'</div>'});
+      ov.querySelector('.mc').innerHTML+='</div>';
+      document.body.appendChild(ov);
+      ov.addEventListener('click',function(e){if(e.target===ov)cM()});
+      return;
+    }
+  }
+
+  // Calendrier navigation
+  var caldir=t.closest('[data-caldir]');
+  if(caldir){var d=parseInt(caldir.getAttribute('data-caldir'));calViewMonth=(calViewMonth+d+12)%12;R();return;}
+  var calgo=t.closest('[data-calgo]');
+  if(calgo){calViewMonth=parseInt(calgo.getAttribute('data-calgo'));R();return;}
+
+  var da=t.closest('[data-do]');
+  if(da){var act=da.getAttribute('data-do');
+    if(act==='add-plant')mPlant(null);
+    else if(act==='edit-plant'){var ep=D.plants.find(function(p){return p.id===SI});if(ep)mPlant(ep);}
+    else if(act==='add-care')mCare('');
+    else if(act==='add-care-plant')mCare(SI||'');
+    else if(act==='reset'&&confirm('Tout effacer ?')){D=JSON.parse(JSON.stringify(DD));persist();V='home';R();}
+    else if(act==='signout')signOut();
+    else if(act==='diag-restart'){diagReset();R();}
+    else if(act==='diag-back'){if(diagStep>0){diagStep--;diagResult=null;R();}}
+    else if(act==='share-copy'){
+      var text=generateShareText();
+      if(navigator.clipboard){navigator.clipboard.writeText(text).then(function(){alert('Copi\u00e9 dans le presse-papier !')}).catch(function(){prompt('Copie ce texte :',text)});}
+      else{prompt('Copie ce texte :',text);}
+    }
+    else if(act==='share-native'){
+      var text=generateShareText();
+      if(navigator.share){navigator.share({title:'Ma collection d\'agrumes',text:text}).catch(function(){});}
+      else{if(navigator.clipboard){navigator.clipboard.writeText(text).then(function(){alert('Copi\u00e9 ! Colle-le o\u00f9 tu veux.')}).catch(function(){prompt('Copie ce texte :',text)});}else{prompt('Copie ce texte :',text);}}
+    }
+    else if(act==='save-weather'){
+      D.settings.weatherCity=gv('wcity')||'Paris';
+      D.settings.weatherLat=parseFloat(gv('wlat'))||48.86;
+      D.settings.weatherLon=parseFloat(gv('wlon'))||2.35;
+      persist();weatherData=null;fetchWeather();R();
+    }
+    else if(act==='geo'){
+      if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(function(pos){
+          D.settings.weatherLat=Math.round(pos.coords.latitude*100)/100;
+          D.settings.weatherLon=Math.round(pos.coords.longitude*100)/100;
+          D.settings.weatherCity='Ma position';
+          persist();weatherData=null;fetchWeather();R();
+        },function(){alert('Impossible d\'acc\u00e9der \u00e0 ta position');});
+      } else alert('G\u00e9olocalisation non support\u00e9e');
+    }
+    return;}
+
+  var see=t.closest('[data-see]');
+  if(see){SI=see.getAttribute('data-see');V='detail';R();window.scrollTo(0,0);return;}
+
+  var qw=t.closest('[data-qw]');
+  if(qw){D.careLogs.push({id:gid(),plantId:qw.getAttribute('data-qw'),type:'watering',date:td(),notes:'Arrosage rapide',fertilizerType:'',fertilizerAmount:'',fruitCount:''});persist();R();return;}
+
+  var cell=t.closest('[data-cell]');
+  if(cell){var ck=cell.getAttribute('data-cell');
+    if(GM){GS=ck;R();}
+    else if(D.greenhouse.positions[ck]){SI=D.greenhouse.positions[ck];V='detail';R();window.scrollTo(0,0);}
+    else{GS=ck;GM=true;R();}
+    return;}
+
+  var rsz=t.closest('[data-rsz]');
+  if(rsz){var op=rsz.getAttribute('data-rsz'),g=D.greenhouse;
+    if(op==='w-')g.width=Math.max(2,g.width-1);if(op==='w+')g.width=Math.min(10,g.width+1);
+    if(op==='h-')g.height=Math.max(2,g.height-1);if(op==='h+')g.height=Math.min(10,g.height+1);
+    persist();R();return;}
+
+  var gput=t.closest('[data-gput]');
+  if(gput){var pid=gput.getAttribute('data-gput'),pos=D.greenhouse.positions;
+    Object.keys(pos).forEach(function(k){if(pos[k]===pid)delete pos[k]});
+    pos[GS]=pid;GM=false;GS=null;persist();R();return;}
+
+  var grem=t.closest('[data-grem]');
+  if(grem){delete D.greenhouse.positions[grem.getAttribute('data-grem')];GM=false;GS=null;persist();R();return;}
+  if(t.closest('[data-gcan]')){GM=false;GS=null;R();return;}
+
+  var pf=t.closest('[data-pf]');if(pf){PF=pf.getAttribute('data-pf');R();return;}
+  var psort=t.closest('[data-psort]');if(psort){PSORT=psort.getAttribute('data-psort');R();return;}
+  var cf=t.closest('[data-cf]');if(cf){CF=cf.getAttribute('data-cf');R();return;}
+
+  var tgl=t.closest('[data-tgl]');
+  if(tgl){var k=tgl.getAttribute('data-tgl');D.settings[k]=!D.settings[k];persist();R();return;}
+
+  var xp=t.closest('[data-xp]');
+  if(xp&&confirm('Supprimer cette plante ?')){var di=xp.getAttribute('data-xp');
+    D.plants=D.plants.filter(function(p){return p.id!==di});D.careLogs=D.careLogs.filter(function(l){return l.plantId!==di});
+    var dp=D.greenhouse.positions;Object.keys(dp).forEach(function(k2){if(dp[k2]===di)delete dp[k2]});
+    persist();V='plants';R();return;}
+
+  var xc=t.closest('[data-xc]');
+  if(xc&&confirm('Supprimer ?')){D.careLogs=D.careLogs.filter(function(l){return l.id!==xc.getAttribute('data-xc')});persist();R();return;}
+
+  if(t.closest('[data-cls]')){cM();return;}
+
+  var svp=t.closest('[data-svp]');
+  if(svp){var nm=gv('fn');if(!nm){alert('Donne un nom !');return;}
+    var np={id:svp.getAttribute('data-svp'),name:nm,variety:gv('fv'),location:gv('fl')||'serre',purchaseDate:gv('fd')||td(),rusticity:gv('fr')||'-8',nursery:gv('fp'),rootstock:gv('fg'),notes:gv('ft'),harvestStart:gv('fhs'),harvestEnd:gv('fhe'),usage:getUsageTags(),photo:gv('fphval')};
+    if(svp.getAttribute('data-ed')==='true'){var idx=D.plants.findIndex(function(p){return p.id===np.id});if(idx>=0)D.plants[idx]=np;}
+    else D.plants.push(np);
+    persist();cM();R();return;}
+
+  if(t.closest('[data-svc]')){var pids=getSelectedPlants();if(!pids.length){alert('S\u00e9lectionne au moins une plante !');return;}
+    var date=gv('cd')||td(),ft=gv('cft'),fa=gv('cfa'),fc=gv('cfc'),cn=gv('cn');
+    pids.forEach(function(pid){
+      D.careLogs.push({id:gid(),plantId:pid,type:CT,date:date,fertilizerType:ft,fertilizerAmount:fa,fruitCount:fc,notes:cn});
+    });
+    persist();cM();R();return;}
+
+  // Plant selection in care modal
+  var cpl=t.closest('[data-cplant]');
+  if(cpl){togglePlantSelection(cpl);return;}
+  if(t.closest('[data-selall]')){selectPlantsByFilter('all');return;}
+  if(t.closest('[data-selnone]')){selectPlantsByFilter('none');return;}
+  var selloc=t.closest('[data-selloc]');
+  if(selloc){selectPlantsByFilter(selloc.getAttribute('data-selloc'));return;}
+
+  var ct=t.closest('[data-ct]');
+  if(ct){CT=ct.getAttribute('data-ct');
+    var cols={watering:['var(--blue-l)','var(--blue)'],fertilizer:['var(--green-l)','var(--green)'],fruit:['var(--accent-l)','var(--accent)'],other:['#F0EDE6','var(--muted)']};
+    document.querySelectorAll('#ctb .tag').forEach(function(b){
+      var c2=b.getAttribute('data-ct');
+      if(c2===CT){b.classList.add('on');b.style.background=cols[c2][0];b.style.color=cols[c2][1];}
+      else{b.classList.remove('on');b.style.background='#F5F3EF';b.style.color='var(--muted)';}
+    });uCE();return;}
+
+  // Usage tags toggle
+  var utag=t.closest('[data-utag]');
+  if(utag){utag.classList.toggle('on');
+    if(utag.classList.contains('on')){utag.style.background='var(--accent-l)';utag.style.color='var(--accent)';utag.style.borderColor='rgba(232,130,12,.3)';}
+    else{utag.style.background='';utag.style.color='';utag.style.borderColor='transparent';}
+    return;}
+
+  // Remove photo
+  if(t.closest('[data-rmphoto]')){var phv=document.getElementById('fphval');if(phv)phv.value='';
+    var phc=t.closest('.fld');if(phc){var imgs=phc.querySelectorAll('img');imgs.forEach(function(i){i.remove()});}
+    return;}
+});
+
+document.addEventListener('input',function(e){
+  if(e.target.hasAttribute('data-search')){PS=e.target.value;
+    var sv=e.target.selectionStart;R();
+    var inp=document.querySelector('[data-search]');if(inp){inp.focus();inp.setSelectionRange(sv,sv);}
+  }
+  if(e.target.hasAttribute('data-rng')){D.settings[e.target.getAttribute('data-rng')]=parseInt(e.target.value);persist();R();}
+});
+
+document.addEventListener('change',function(e){
+  if(e.target.id==='fph'&&e.target.files&&e.target.files[0]){
+    compressPhoto(e.target.files[0],function(dataUrl){
+      var phv=document.getElementById('fphval');if(phv)phv.value=dataUrl;
+      var container=e.target.closest('.fld');
+      var existing=container.querySelector('img');
+      if(existing)existing.src=dataUrl;
+      else{var img=document.createElement('img');img.src=dataUrl;img.style.cssText='width:60px;height:60px;border-radius:10px;object-fit:cover';container.querySelector('div').prepend(img);}
+    });
+  }
+});
+
+// ── SPLASH ──
+var splashEl=document.createElement('div');splashEl.className='splash';splashEl.id='splash';
+splashEl.innerHTML='<div class="splash-i">\ud83c\udf4b</div><div style="color:#fff;font-size:24px;font-weight:700;margin-top:16px">Mes Agrumes</div><div style="color:rgba(255,255,255,.75);font-size:13px;margin-top:6px">Chargement...</div>';
+document.body.appendChild(splashEl);
+
+function hideSplash(){
+  var s=document.getElementById('splash');
+  if(s){s.classList.add('hide');setTimeout(function(){s.remove()},600);}
+}
+
+})();
+</script>
+</body>
+</html>
