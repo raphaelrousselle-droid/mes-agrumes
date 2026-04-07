@@ -114,7 +114,6 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
 var provider=new firebase.auth.GoogleAuthProvider();
 var currentUser=null;
-var unsub=null; // Firestore listener
 
 // ── Data ──
 var DD={plants:[],careLogs:[],greenhouse:{width:6,height:4,positions:{}},settings:{wateringReminder:true,wateringInterval:3,weatherAlerts:true,weatherLat:48.86,weatherLon:2.35,weatherCity:'Paris'}};
@@ -311,7 +310,6 @@ function saveToFirebase(){
   if(!currentUser)return;
   if(saveTimer)clearTimeout(saveTimer);
   saveTimer=setTimeout(function(){
-    _saving=true;
     db.collection('users').doc(currentUser.uid).set({
       plants:D.plants,
       careLogs:D.careLogs,
@@ -321,21 +319,16 @@ function saveToFirebase(){
       wishlistInited:D.wishlistInited||false,
       encV5:D.encV5||false,
       updatedAt:firebase.firestore.FieldValue.serverTimestamp()
-    }).then(function(){
-      setTimeout(function(){_saving=false},500);
-    }).catch(function(e){console.error('Save error:',e);_saving=false;});
+    }).catch(function(e){console.error('Save error:',e)});
   },300);
 }
 
 var dataLoaded=false;
-var _migrationDone=false; // local flag to prevent migration re-running
-var _saving=false; // flag to ignore snapshots during save
+var _migrationDone=false;
 
-function listenToFirebase(){
-  if(unsub)unsub();
+function loadFromFirebase(){
   if(!currentUser)return;
-  unsub=db.collection('users').doc(currentUser.uid).onSnapshot(function(doc){
-    if(_saving)return; // ignore echo from our own save
+  db.collection('users').doc(currentUser.uid).get().then(function(doc){
     if(doc.exists){
       var d=doc.data();
       D.plants=d.plants||[];
@@ -349,8 +342,8 @@ function listenToFirebase(){
     dataLoaded=true;
     R();
     if(!weatherData&&D.settings.weatherAlerts)fetchWeather();
-  },function(err){
-    console.error('Firestore listen error:',err);
+  }).catch(function(err){
+    console.error('Firestore load error:',err);
     dataLoaded=true;
     R();
   });
@@ -366,11 +359,9 @@ auth.onAuthStateChanged(function(user){
   if(user){
     currentUser=user;
     dataLoaded=false;
-    listenToFirebase();
-    // Don't render yet - wait for onSnapshot to deliver data
+    loadFromFirebase();
   } else {
     currentUser=null;
-    if(unsub){unsub();unsub=null;}
     D=JSON.parse(JSON.stringify(DD));
     dataLoaded=false;
     showLogin();
@@ -1817,12 +1808,14 @@ document.addEventListener('click',function(e){
     if(wlsave.getAttribute('data-ed')==='true'){var idx=D.wishlist.findIndex(function(v){return v.id===nv.id});if(idx>=0)D.wishlist[idx]=nv;}
     else D.wishlist.push(nv);
     // Auto-add to plant collection when status is "greffe"
-    if(nv.status==='greffe'){
+    // Auto-add to plant collection when status is "greffe" or "collection"
+    if(nv.status==='greffe'||nv.status==='collection'){
       var alreadyInPlants=D.plants.some(function(p){return p.name.toLowerCase()===nv.name.toLowerCase()});
       if(!alreadyInPlants){
         var harvestStart='',harvestEnd='';
         if(nv.fruct&&nv.fruct.length){harvestStart=''+(nv.fruct[0]-1);harvestEnd=''+(nv.fruct[nv.fruct.length-1]-1);}
-        D.plants.push({id:gid(),name:nv.name,variety:nv.type||'',location:'serre',purchaseDate:td(),
+        var loc=nv.status==='greffe'?'serre':'serre';
+        D.plants.push({id:gid(),name:nv.name,variety:nv.type||'',location:loc,purchaseDate:td(),
           rusticity:''+nv.rusticity,nursery:nv.src||'',rootstock:'',notes:(nv.rem||'')+'\nAjout\u00e9 depuis l\'encyclop\u00e9die',
           harvestStart:harvestStart,harvestEnd:harvestEnd,usage:[],photo:''});
       }
