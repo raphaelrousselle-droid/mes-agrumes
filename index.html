@@ -1454,6 +1454,7 @@ function rD(){
   h+='<div class="cd"><h3 style="margin:0 0 12px;font-size:15px">\ud83d\udccb Fiche</h3>';
   var harv=fmtHarvest(p);
   var infoRows=[{l:'Date d\'achat',v:fd(p.purchaseDate)},{l:'P\u00e9pini\u00e8re',v:esc(p.nursery)||'\u2014'},{l:'Porte-greffe',v:esc(p.rootstock)||'\u2014'},{l:'Rusticit\u00e9',v:(p.rusticity||'?')+'\u00b0C'}];
+  if(p.firstFlower)infoRows.push({l:'\ud83c\udf38 1\u00e8re floraison',v:fd(p.firstFlower)});
   if(harv)infoRows.push({l:'R\u00e9colte',v:harv});
   infoRows.forEach(function(r){h+='<div class="ir"><span style="color:var(--muted)">'+r.l+'</span><span style="font-weight:600">'+r.v+'</span></div>'});
   if(p.usage&&p.usage.length){h+='<div style="margin-top:10px"><span style="font-size:12px;color:var(--muted);font-weight:600">UTILISATION</span><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">';p.usage.forEach(function(u){h+='<span class="bdg bdg-a">'+esc(u)+'</span>'});h+='</div></div>';}
@@ -1463,16 +1464,29 @@ function rD(){
   h+='<div class="cd" style="text-align:center;padding:10px"><div class="sl">Engrais</div><div style="font-size:13px;font-weight:700;margin-top:4px;color:var(--green)">'+fc+' fois</div></div>';
   h+='<div class="cd" style="text-align:center;padding:10px"><div class="sl">Fruits</div><div style="font-size:13px;font-weight:700;margin-top:4px;color:var(--accent)">'+tf+'</div></div></div>';
   h+='<button class="btn btn-p w100 jc" style="margin-bottom:16px" data-do="add-care-plant">\uff0b Ajouter un soin</button>';
-  h+='<h3 style="margin:0 0 10px;font-size:15px">\ud83d\udcc5 Historique</h3>';
-  if(!logs.length)h+='<div class="cd" style="text-align:center;color:var(--muted);font-size:13px">Aucun soin</div>';
-  else logs.forEach(function(l){
+
+  // Derniers soins par type (au lieu de tout l'historique)
+  h+='<h3 style="margin:0 0 10px;font-size:15px">\ud83d\udcc5 Derniers soins</h3>';
+  var lastWater=logs.find(function(l){return l.type==='watering'});
+  var lastFert=logs.find(function(l){return l.type==='fertilizer'});
+  var lastFruit=logs.find(function(l){return l.type==='fruit'});
+  var lastOther=logs.find(function(l){return l.type!=='watering'&&l.type!=='fertilizer'&&l.type!=='fruit'});
+  var lastItems=[lastWater,lastFert,lastFruit,lastOther].filter(Boolean);
+
+  if(!lastItems.length)h+='<div class="cd" style="text-align:center;color:var(--muted);font-size:13px">Aucun soin enregistr\u00e9</div>';
+  else lastItems.forEach(function(l){
     h+='<div class="cd" style="padding:12px;display:flex;gap:10px;align-items:flex-start"><span style="font-size:22px;margin-top:2px">'+TE[l.type]+'</span><div class="g1"><div class="fb"><span style="font-weight:600;font-size:13px">'+TL[l.type]+'</span><span style="font-size:12px;color:var(--muted)">'+fd(l.date)+'</span></div>';
     if(l.fertilizerType)h+='<div style="font-size:12px;margin-top:2px">'+esc(l.fertilizerType)+'</div>';
     if(l.fertilizerAmount)h+='<div style="font-size:12px">Dose: '+esc(l.fertilizerAmount)+'</div>';
     if(l.fruitCount)h+='<div style="font-size:12px">\ud83c\udf4a '+l.fruitCount+' fruits</div>';
     if(l.notes)h+='<div style="font-size:12px;color:var(--muted);margin-top:4px;font-style:italic">'+esc(l.notes)+'</div>';
-    h+='</div><button class="bs bs-r" data-xc="'+l.id+'" style="padding:4px 8px;font-size:11px">\u2715</button></div>';
+    h+='</div></div>';
   });
+
+  // Bouton historique complet
+  if(logs.length>0){
+    h+='<button class="btn btn-s w100 jc" style="margin-top:10px;font-size:13px" data-showhist="'+p.id+'">\ud83d\udcc3 Voir tout l\'historique ('+logs.length+' soin'+(logs.length>1?'s':'')+')</button>';
+  }
   return h+'</div>';
 }
 
@@ -1525,7 +1539,7 @@ function rS(){
 
 // ── MODALS ──
 function mPlant(p){
-  var ed=!!p;p=p||{id:gid(),name:'',variety:'',location:'serre',purchaseDate:td(),nursery:'',rootstock:'',rusticity:'-8',notes:'',harvestStart:'',harvestEnd:'',usage:[],photo:''};
+  var ed=!!p;p=p||{id:gid(),name:'',variety:'',location:'serre',purchaseDate:td(),nursery:'',rootstock:'',rusticity:'-8',notes:'',harvestStart:'',harvestEnd:'',usage:[],photo:'',firstFlower:''};
   var ov=document.createElement('div');ov.className='mo';ov.id='modal';
   ov.innerHTML='<div class="mc"><div class="fb" style="margin-bottom:16px"><h2 style="font-size:20px">'+(ed?'Modifier':'Ajouter un agrume')+'</h2><button data-cls style="background:none;border:none;cursor:pointer;font-size:20px">\u2715</button></div>'
     +'<div class="fld"><label class="lbl">Nom / Vari\u00e9t\u00e9 *</label><input class="inp" id="fn" value="'+esc(p.name)+'"></div>'
@@ -1533,6 +1547,7 @@ function mPlant(p){
     +'<div class="fld"><label class="lbl">Emplacement</label><select class="sel" id="fl">'+LOCS.map(function(l){return '<option value="'+l.v+'"'+(p.location===l.v?' selected':'')+'>'+l.l+'</option>'}).join('')+'</select></div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="fld"><label class="lbl">Date d\'achat</label><input type="date" class="inp" id="fd" value="'+p.purchaseDate+'"></div>'
     +'<div class="fld"><label class="lbl">Rusticit\u00e9</label><select class="sel" id="fr">'+RUST.map(function(r){return '<option value="'+r.v+'"'+(p.rusticity===r.v?' selected':'')+'>'+r.l+'</option>'}).join('')+'</select></div></div>'
+    +'<div class="fld"><label class="lbl">1\u00e8re floraison</label><input type="date" class="inp" id="fff" value="'+(p.firstFlower||'')+'"></div>'
     +'<div class="fld"><label class="lbl">P\u00e9pini\u00e8re</label><input class="inp" id="fp" value="'+esc(p.nursery)+'"></div>'
     +'<div class="fld"><label class="lbl">Porte-greffe</label><input class="inp" id="fg" value="'+esc(p.rootstock)+'"></div>'
     +'<div class="fld"><label class="lbl">P\u00e9riode de r\u00e9colte</label><div style="display:flex;gap:8px;align-items:center"><select class="sel" id="fhs" style="flex:1">'+('<option value="">D\u00e9but...</option>'+MONTHS.map(function(m,i){return '<option value="'+i+'"'+((p.harvestStart||'')===''+i?' selected':'')+'>'+m+'</option>'}).join(''))+'</select><span style="color:var(--muted)">\u2192</span><select class="sel" id="fhe" style="flex:1">'+('<option value="">Fin...</option>'+MONTHS.map(function(m,i){return '<option value="'+i+'"'+((p.harvestEnd||'')===''+i?' selected':'')+'>'+m+'</option>'}).join(''))+'</select></div></div>'
@@ -1618,6 +1633,57 @@ function uCE(){
   if(CT==='fertilizer')x.innerHTML='<div class="fld"><label class="lbl">Type d\'engrais</label><select class="sel" id="cft"><option value="">Choisir...</option>'+FERTS.map(function(f){return '<option>'+f+'</option>'}).join('')+'</select></div><div class="fld"><label class="lbl">Quantit\u00e9</label><input class="inp" id="cfa" placeholder="Ex: 5g/L..."></div>';
   else if(CT==='fruit')x.innerHTML='<div class="fld"><label class="lbl">Nombre de fruits</label><input type="number" class="inp" id="cfc"></div>';
   else x.innerHTML='';
+}
+
+function mHist(plantId){
+  var p=D.plants.find(function(x){return x.id===plantId});
+  if(!p)return;
+  var logs=D.careLogs.filter(function(l){return l.plantId===plantId}).sort(function(a,b){return b.date.localeCompare(a.date)});
+  var ov=document.createElement('div');ov.className='mo';ov.id='modal';
+  var hm='<div class="mc" style="max-height:90vh;overflow-y:auto"><div class="fb" style="margin-bottom:16px;position:sticky;top:0;background:var(--card);padding:8px 0;z-index:1"><h2 style="font-size:18px">\ud83d\udcc3 Historique \u2014 '+esc(p.name)+'</h2><button data-cls style="background:none;border:none;cursor:pointer;font-size:20px">\u2715</button></div>';
+  hm+='<div style="font-size:12px;color:var(--muted);margin-bottom:12px">'+logs.length+' soin'+(logs.length>1?'s':'')+' enregistr\u00e9'+(logs.length>1?'s':'')+'</div>';
+
+  // Filtres par type
+  hm+='<div style="display:flex;gap:6px;margin-bottom:12px;overflow-x:auto">';
+  [{id:'all',l:'Tous'},{id:'watering',l:'\ud83d\udca7 Arrosage'},{id:'fertilizer',l:'\ud83e\uddea Engrais'},{id:'fruit',l:'\ud83c\udf4a Fruits'}].forEach(function(f){
+    hm+='<button class="bs bs-n" data-histf="'+f.id+'" style="white-space:nowrap;font-size:11px">'+f.l+'</button>';
+  });
+  hm+='</div>';
+
+  hm+='<div id="hist-list">';
+  logs.forEach(function(l){
+    hm+='<div class="cd hist-item" data-htype="'+l.type+'" style="padding:10px;display:flex;gap:10px;align-items:flex-start;margin-bottom:4px"><span style="font-size:18px;margin-top:2px">'+TE[l.type]+'</span><div class="g1"><div class="fb"><span style="font-weight:600;font-size:12px">'+TL[l.type]+'</span><span style="font-size:11px;color:var(--muted)">'+fd(l.date)+'</span></div>';
+    if(l.fertilizerType)hm+='<div style="font-size:11px;margin-top:2px">'+esc(l.fertilizerType)+(l.fertilizerAmount?' \u2014 '+esc(l.fertilizerAmount):'')+'</div>';
+    if(l.fruitCount)hm+='<div style="font-size:11px">\ud83c\udf4a '+l.fruitCount+' fruits</div>';
+    if(l.notes)hm+='<div style="font-size:11px;color:var(--muted);margin-top:2px;font-style:italic">'+esc(l.notes)+'</div>';
+    hm+='</div><button class="bs bs-r" data-xc="'+l.id+'" style="padding:3px 6px;font-size:10px">\u2715</button></div>';
+  });
+  hm+='</div></div>';
+  ov.innerHTML=hm;
+  document.body.appendChild(ov);
+  ov.addEventListener('click',function(e){
+    if(e.target===ov)cM();
+    var hf=e.target.closest('[data-histf]');
+    if(hf){
+      var filter=hf.getAttribute('data-histf');
+      // Toggle active style
+      ov.querySelectorAll('[data-histf]').forEach(function(b){b.className='bs bs-n'});
+      hf.className='bs bs-a';
+      // Filter items
+      ov.querySelectorAll('.hist-item').forEach(function(item){
+        if(filter==='all')item.style.display='';
+        else item.style.display=item.getAttribute('data-htype')===filter?'':'none';
+      });
+    }
+    // Handle delete from history modal
+    var xc=e.target.closest('[data-xc]');
+    if(xc){
+      if(confirm('Supprimer ce soin ?')){
+        D.careLogs=D.careLogs.filter(function(l){return l.id!==xc.getAttribute('data-xc')});
+        persist();cM();R();
+      }
+    }
+  });
 }
 
 function cM(){var m=document.getElementById('modal');if(m)m.remove()}
@@ -1839,11 +1905,14 @@ document.addEventListener('click',function(e){
   var xc=t.closest('[data-xc]');
   if(xc&&confirm('Supprimer ?')){D.careLogs=D.careLogs.filter(function(l){return l.id!==xc.getAttribute('data-xc')});persist();R();return;}
 
+  var shBtn=t.closest('[data-showhist]');
+  if(shBtn){mHist(shBtn.getAttribute('data-showhist'));return;}
+
   if(t.closest('[data-cls]')){cM();return;}
 
   var svp=t.closest('[data-svp]');
   if(svp){var nm=gv('fn');if(!nm){alert('Donne un nom !');return;}
-    var np={id:svp.getAttribute('data-svp'),name:nm,variety:gv('fv'),location:gv('fl')||'serre',purchaseDate:gv('fd')||td(),rusticity:gv('fr')||'-8',nursery:gv('fp'),rootstock:gv('fg'),notes:gv('ft'),harvestStart:gv('fhs'),harvestEnd:gv('fhe'),usage:getUsageTags(),photo:gv('fphval')};
+    var np={id:svp.getAttribute('data-svp'),name:nm,variety:gv('fv'),location:gv('fl')||'serre',purchaseDate:gv('fd')||td(),rusticity:gv('fr')||'-8',nursery:gv('fp'),rootstock:gv('fg'),notes:gv('ft'),harvestStart:gv('fhs'),harvestEnd:gv('fhe'),usage:getUsageTags(),photo:gv('fphval'),firstFlower:gv('fff')||''};
     if(svp.getAttribute('data-ed')==='true'){var idx=D.plants.findIndex(function(p){return p.id===np.id});if(idx>=0)D.plants[idx]=np;}
     else D.plants.push(np);
     persist();cM();R();return;}
