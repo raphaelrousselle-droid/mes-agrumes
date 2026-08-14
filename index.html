@@ -10,48 +10,48 @@
 <title>Mes Agrumes</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#FFFBF5;--card:#fff;--accent:#E8820C;--accent-l:#FFF3E0;--green:#689F38;--green-l:#F1F8E9;--red:#C62828;--red-l:#FFEBEE;--blue:#5C6BC0;--blue-l:#E8EAF6;--txt:#5D4E37;--muted:#A08B70;--brd:#F0E6D8;--gold:#BF8A40;--shadow:0 1px 4px rgba(93,78,55,.04)}
+:root{--bg:#FFF8F0;--card:#fff;--accent:#E67E22;--accent-l:#FFF0DB;--accent-d:#D35400;--green:#27AE60;--green-l:#E8F8F0;--red:#E74C3C;--red-l:#FDECEB;--blue:#3498DB;--blue-l:#EBF5FB;--purple:#8E44AD;--purple-l:#F4ECF7;--txt:#3D2B1F;--muted:#8B7355;--brd:#F0E0CC;--gold:#D4900A;--shadow:0 2px 12px rgba(61,43,31,.08)}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;min-height:100dvh;overscroll-behavior:none;-webkit-font-smoothing:antialiased}
 #app{max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;position:relative;padding-bottom:72px}
-.hdr{background:linear-gradient(135deg,#E8820C,#D4690A);color:#fff;padding:20px 20px 28px;padding-top:max(20px,env(safe-area-inset-top))}
-.hdr h1{font-size:20px;font-weight:600;letter-spacing:-.3px}
+.hdr{background:linear-gradient(145deg,#E67E22 0%,#D35400 50%,#C0392B 100%);color:#fff;padding:24px 20px 40px;padding-top:max(24px,env(safe-area-inset-top));border-radius:0 0 32px 32px;position:relative}
+.hdr h1{font-size:24px;font-weight:700;letter-spacing:-.5px}
 .hdr-sub{font-size:12px;opacity:.75;margin-top:4px}
-.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;display:flex;justify-content:space-around;padding:6px 0 max(10px,env(safe-area-inset-bottom));border-top:0.5px solid var(--brd);z-index:100}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;display:flex;justify-content:space-around;padding:8px 0 max(12px,env(safe-area-inset-bottom));border-top:none;z-index:100;box-shadow:0 -4px 20px rgba(61,43,31,.08);border-radius:20px 20px 0 0}
 .nav-b{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;padding:4px 12px;cursor:pointer;font-size:10px;font-family:inherit;color:var(--muted);transition:color .2s}
 .nav-b.on{color:var(--accent);font-weight:600}
-.cd{background:var(--card);border-radius:14px;padding:16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(93,78,55,.04);border:0.5px solid var(--brd);transition:transform .15s}
-.bdg{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:500}
+.cd{background:var(--card);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 3px 15px rgba(61,43,31,.08);border:none;transition:transform .15s}
+.bdg{display:inline-block;padding:3px 10px;border-radius:8px;font-size:10px;font-weight:600}
 .bdg-a{color:var(--accent);background:var(--accent-l)}.bdg-g{color:var(--green);background:var(--green-l)}.bdg-b{color:var(--blue);background:var(--blue-l)}.bdg-r{color:var(--red);background:var(--red-l)}
-.inp,.sel{width:100%;padding:10px 14px;border-radius:10px;border:0.5px solid var(--brd);font-size:14px;font-family:inherit;background:#fff;outline:none;transition:border .2s}
+.inp,.sel{width:100%;padding:12px 16px;border-radius:12px;border:1.5px solid var(--brd);font-size:14px;font-family:inherit;background:#fff;outline:none;transition:border .2s}
 .inp:focus,.sel:focus{border-color:var(--accent)}
 textarea.inp{resize:vertical;min-height:56px}
-.lbl{display:block;font-size:10px;font-weight:500;color:var(--gold,var(--muted));margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px}
+.lbl{display:block;font-size:11px;font-weight:600;color:var(--gold);margin-bottom:6px;text-transform:uppercase;letter-spacing:.8px}
 .fld{margin-bottom:14px}
 .btn{padding:10px 20px;border-radius:12px;border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:all .15s}
 .btn:active{transform:scale(.96)}
-.btn-p{background:linear-gradient(135deg,#E8820C,#D4690A);color:#fff;box-shadow:0 2px 8px rgba(232,130,12,.2)}.btn-s{background:var(--brd);color:var(--txt)}.btn-w{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.25)}
-.btn-google{background:#fff;color:#5D4E37;border:0.5px solid var(--brd);padding:12px 24px;border-radius:14px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:10px;transition:all .15s;box-shadow:0 1px 4px rgba(93,78,55,.04)}
+.btn-p{background:linear-gradient(135deg,#E67E22,#D35400);color:#fff;box-shadow:0 4px 15px rgba(230,126,34,.35);font-weight:700}.btn-s{background:var(--brd);color:var(--txt)}.btn-w{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.25)}
+.btn-google{background:#fff;color:var(--txt);border:none;padding:14px 28px;border-radius:16px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:10px;transition:all .15s;box-shadow:0 4px 15px rgba(61,43,31,.1)}
 .btn-google:active{transform:scale(.97)}
-.bs{padding:6px 12px;border-radius:8px;border:none;font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .1s}
+.bs{padding:7px 14px;border-radius:10px;border:none;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .1s}
 .bs:active{transform:scale(.95)}
-.bs-a{background:var(--accent-l);color:var(--accent)}.bs-g{background:var(--green-l);color:var(--green)}.bs-r{background:var(--red-l);color:var(--red)}.bs-n{background:#F5EDE0;color:var(--txt)}
+.bs-a{background:var(--accent-l);color:var(--accent)}.bs-g{background:var(--green-l);color:var(--green)}.bs-r{background:var(--red-l);color:var(--red)}.bs-n{background:#F0E0CC;color:var(--txt)}
 .tag{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all .15s}
 .tag.on{border-color:currentColor}
-.mo{position:fixed;inset:0;background:rgba(93,78,55,.4);z-index:200;display:flex;align-items:flex-end;justify-content:center;animation:fi .2s}
+.mo{position:fixed;inset:0;background:rgba(61,43,31,.5);z-index:200;display:flex;align-items:flex-end;justify-content:center;animation:fi .2s}
 .mc{background:var(--bg);border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding:24px 20px calc(32px + env(safe-area-inset-bottom,0px));animation:su .3s ease}
 @keyframes fi{from{opacity:0}to{opacity:1}}
 @keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .sec{padding:16px}
 .sg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .sc{text-align:center;padding:12px;cursor:pointer}
-.sn{font-size:22px;font-weight:600;margin-top:4px}
+.sn{font-size:24px;font-weight:700;margin-top:4px}
 .sl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
 .gg{display:grid;gap:6px}
 .gc{aspect-ratio:1;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;font-weight:500;cursor:pointer;padding:2px;text-align:center;transition:all .15s;border:0.5px solid var(--brd);background:#F5EDE0;color:var(--muted)}
 .gc.hp{background:var(--green-l);color:var(--green)}.gc.sel{border:2px solid var(--accent);box-shadow:0 0 0 3px rgba(232,130,12,.15)}
 .gc:active{transform:scale(.94)}
-.tgl{width:48px;height:28px;border-radius:14px;border:none;cursor:pointer;position:relative;background:#F5EDE0;transition:background .3s}
+.tgl{width:48px;height:28px;border-radius:14px;border:none;cursor:pointer;position:relative;background:#F0E0CC;transition:background .3s}
 .tgl.on{background:var(--accent)}
 .tgl-k{width:22px;height:22px;border-radius:11px;background:#fff;position:absolute;top:3px;left:3px;transition:left .3s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
 .tgl.on .tgl-k{left:23px}
@@ -60,9 +60,9 @@ textarea.inp{resize:vertical;min-height:56px}
 .fc{display:flex;align-items:center}
 .g1{flex:1}
 .w100{width:100%}.jc{justify-content:center}
-.ri{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--brd)}
+.ri{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #F5EDE0}
 .ri:last-child{border-bottom:none}
-.ir{display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid var(--brd);font-size:13px}
+.ir{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F5EDE0;font-size:13px}
 .ir:last-child{border-bottom:none}
 .splash{position:fixed;inset:0;z-index:9999;background:linear-gradient(145deg,#E8820C,#D4740A);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s,transform .6s}
 .splash.hide{opacity:0;transform:scale(1.05);pointer-events:none}
@@ -70,23 +70,23 @@ textarea.inp{resize:vertical;min-height:56px}
 @keyframes bn{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 .login-page{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;padding:40px 20px;text-align:center}
 .login-logo{font-size:64px;margin-bottom:16px}
-.login-title{font-size:28px;font-weight:600;color:var(--txt);margin-bottom:8px}
+.login-title{font-size:28px;font-weight:700;color:var(--txt);margin-bottom:8px}
 .login-sub{font-size:14px;color:var(--muted);margin-bottom:32px;max-width:300px;line-height:1.5}
 .sync-bar{background:var(--accent-l);padding:6px 16px;font-size:11px;color:var(--accent);text-align:center;font-weight:500;border-radius:0 0 12px 12px}
 .user-bar{display:flex;align-items:center;gap:8px;margin-top:8px;padding:6px 10px;background:rgba(255,255,255,.15);border-radius:10px;font-size:12px}
 .user-bar img{width:24px;height:24px;border-radius:50%}
-.sec-label{font-size:10px;font-weight:500;color:var(--gold,#BF8A40);text-transform:uppercase;letter-spacing:.8px;margin:4px 0 10px}
-.kpi-row{display:flex;gap:8px;margin:-14px 16px 16px;position:relative;z-index:1}
-.kpi{flex:1;background:#fff;border-radius:14px;padding:14px 10px;border:0.5px solid var(--brd);box-shadow:0 2px 8px rgba(93,78,55,.06);text-align:center}
-.kpi .kn{font-size:22px;font-weight:600}
+.sec-label{font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin:8px 0 12px}
+.kpi-row{display:flex;gap:10px;margin:-22px 16px 18px;position:relative;z-index:1}
+.kpi{flex:1;background:#fff;border-radius:16px;padding:16px 10px;border:none;box-shadow:0 4px 15px rgba(61,43,31,.1);text-align:center}
+.kpi .kn{font-size:26px;font-weight:700}
 .kpi .kl{font-size:9px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
 .quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:16px}
-.qk{background:#fff;border-radius:14px;padding:14px;border:0.5px solid var(--brd);display:flex;align-items:center;gap:10px;cursor:pointer;box-shadow:0 1px 4px rgba(93,78,55,.04);transition:transform .15s}
+.qk{background:#fff;border-radius:16px;padding:16px;border:none;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:0 3px 15px rgba(61,43,31,.08);transition:transform .15s}
 .qk:active{transform:scale(.97)}
 .qk-ico{font-size:24px}
-.qk-tl{font-size:12px;font-weight:600;color:var(--txt)}
+.qk-tl{font-size:13px;font-weight:700;color:var(--txt)}
 .qk-tv{font-size:10px;color:var(--muted)}
-.alert-bar{background:#FFF3E0;border:1px solid #FFE0B2;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.alert-bar{background:linear-gradient(135deg,#FFF3E0,#FFE8CC);border:none;border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:10px;margin-bottom:14px;box-shadow:0 2px 8px rgba(230,126,34,.12)}
 .alert-bar .adot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .alert-bar p{font-size:12px;font-weight:500;margin:0}
 </style>
@@ -1308,18 +1308,19 @@ function rN(){
 function rH(){
   var w=nw(),rc=D.careLogs.slice().sort(function(a,b){return b.date.localeCompare(a.date)}).slice(0,5);
   var s=D.plants.filter(function(p){return p.location==='serre'}).length;
-  var po=D.plants.filter(function(p){return p.location==='pot'}).length;
-  var t=D.plants.filter(function(p){return p.location==='pleine_terre'}).length;
   var wlCount=D.wishlist?D.wishlist.length:ENC_DEFAULTS.length;
 
-  var h='<div class="hdr"><div style="font-size:11px;opacity:.6;margin-bottom:4px">'+new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+'</div>';
-  h+='<h1>Mon jardin d\'agrumes</h1>';
-  h+='<div class="hdr-sub">'+D.plants.length+' plante'+(D.plants.length>1?'s':'')+' en suivi</div>';
+  // Header
+  var h='<div class="hdr">';
+  h+='<div style="font-size:11px;opacity:.6;margin-bottom:6px">'+new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+'</div>';
+  h+='<h1>\ud83c\udf4b Mon jardin d\'agrumes</h1>';
+  h+='<div class="hdr-sub">'+D.plants.length+' plante'+(D.plants.length>1?'s':'')+' \u2022 '+D.careLogs.length+' soins \u2022 Bourges</div>';
   if(currentUser){
     h+='<div class="user-bar">'+(currentUser.photoURL?'<img src="'+currentUser.photoURL+'" alt="">':'')+'<span>'+esc(currentUser.displayName||currentUser.email)+'</span></div>';
   }
   h+='</div>';
 
+  // KPI
   h+='<div class="kpi-row">';
   h+='<div class="kpi" style="cursor:pointer" data-go="plants"><div class="kn" style="color:var(--accent)">'+D.plants.length+'</div><div class="kl">Plantes</div></div>';
   h+='<div class="kpi"><div class="kn" style="color:var(--green)">'+D.careLogs.length+'</div><div class="kl">Soins</div></div>';
@@ -1328,82 +1329,103 @@ function rH(){
 
   h+='<div class="sec">';
 
+  // Frost alerts
   h+=rFrostBanner();
 
+  // Watering alerts
   if(w.length){
-    h+='<div class="alert-bar"><div class="adot" style="background:var(--blue)"></div><p style="color:#1565C0;flex:1">'+w.length+' plante'+(w.length>1?'s':'')+' \u00e0 arroser</p><button class="bs bs-a" style="font-size:10px" data-go="care">Voir</button></div>';
+    h+='<div class="alert-bar"><div class="adot" style="background:var(--blue);animation:pulse 1.5s infinite"></div><p style="color:#1565C0;flex:1">\ud83d\udca7 '+w.length+' plante'+(w.length>1?'s':'')+' \u00e0 arroser !</p><button class="bs bs-a" style="font-size:10px" data-go="care">Voir</button></div>';
+    h+='<style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}</style>';
   }
 
+  // Weather
   h+=rWeatherSummary();
 
-  h+='<div class="sec-label">Actions rapides</div>';
+  // Quick actions - with colored backgrounds
+  h+='<div class="sec-label">\u26a1 Actions rapides</div>';
   h+='<div class="quick-grid">';
-  h+='<div class="qk" data-go="enc"><span class="qk-ico">\ud83d\udcd6</span><div><div class="qk-tl">Encyclop\u00e9die</div><div class="qk-tv">'+wlCount+' fiches</div></div></div>';
-  h+='<div class="qk" data-go="diag"><span class="qk-ico">\ud83e\ude7a</span><div><div class="qk-tl">Diagnostic</div><div class="qk-tv">Carences</div></div></div>';
-
+  h+='<div class="qk" style="background:linear-gradient(135deg,#FFF0DB,#FFE4BF)" data-go="enc"><span style="font-size:28px">\ud83d\udcd6</span><div><div class="qk-tl">Encyclop\u00e9die</div><div class="qk-tv">'+wlCount+' fiches</div></div></div>';
+  h+='<div class="qk" style="background:linear-gradient(135deg,#FDECEB,#FADBD8)" data-go="diag"><span style="font-size:28px">\ud83e\ude7a</span><div><div class="qk-tl">Diagnostic</div><div class="qk-tv">Carences</div></div></div>';
   var calNow=getTasksForMonth(new Date().getMonth());
-  var calHigh=calNow.filter(function(t){return t.priority==='haute'}).length;
-  h+='<div class="qk" data-go="cal"><span class="qk-ico">\ud83d\udcc5</span><div><div class="qk-tl">Calendrier</div><div class="qk-tv">'+calNow.length+' t\u00e2che'+(calNow.length>1?'s':'')+'</div></div></div>';
-  h+='<div class="qk" data-go="greenhouse"><span class="qk-ico">\ud83c\udfe0</span><div><div class="qk-tl">Ma serre</div><div class="qk-tv">'+s+' agrume'+(s>1?'s':'')+'</div></div></div>';
+  h+='<div class="qk" style="background:linear-gradient(135deg,#EBF5FB,#D4E6F1)" data-go="cal"><span style="font-size:28px">\ud83d\udcc5</span><div><div class="qk-tl">Calendrier</div><div class="qk-tv">'+calNow.length+' t\u00e2ches</div></div></div>';
+  h+='<div class="qk" style="background:linear-gradient(135deg,#E8F8F0,#D5F5E3)" data-go="greenhouse"><span style="font-size:28px">\ud83c\udfe0</span><div><div class="qk-tl">Ma serre</div><div class="qk-tv">'+s+' agrume'+(s>1?'s':'')+'</div></div></div>';
   h+='</div>';
 
+  // Mes agrumes
   if(D.plants.length){
-    h+='<div class="sec-label">Mes agrumes</div>';
+    h+='<div class="sec-label">\ud83c\udf3f Mes agrumes</div>';
     D.plants.slice(0,4).forEach(function(p){
       var lo=locI(p.location);
-      h+='<div class="cd" style="padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer" data-det="'+p.id+'">';
-      var iconBg=p.location==='serre'?'#FFF3E0':p.location==='pleine_terre'?'#F1F8E9':'#E8EAF6';
+      h+='<div class="cd" style="padding:14px;display:flex;align-items:center;gap:14px;cursor:pointer" data-det="'+p.id+'">';
+
+      // Avatar
+      var colors=[['#FFF0DB','#E67E22'],['#E8F8F0','#27AE60'],['#EBF5FB','#3498DB'],['#F4ECF7','#8E44AD']];
+      var ci=D.plants.indexOf(p)%4;
       if(p.photo){
-        h+='<img src="'+p.photo+'" style="width:42px;height:42px;border-radius:12px;object-fit:cover;flex-shrink:0">';
+        h+='<img src="'+p.photo+'" style="width:48px;height:48px;border-radius:14px;object-fit:cover;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.1)">';
       } else {
-        h+='<div style="width:42px;height:42px;border-radius:12px;background:'+iconBg+';display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:20px">\ud83c\udf4a</span></div>';
+        h+='<div style="width:48px;height:48px;border-radius:14px;background:'+colors[ci][0]+';display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.06)"><span style="font-size:22px">\ud83c\udf4a</span></div>';
       }
+
       h+='<div style="flex:1;min-width:0">';
-      h+='<div style="font-size:14px;font-weight:600">'+esc(p.name)+'</div>';
+      h+='<div style="font-size:15px;font-weight:700;color:var(--txt)">'+esc(p.name)+'</div>';
       h+='<div style="font-size:11px;color:var(--muted);margin-top:2px">'+lo.l+(p.nursery?' \u2022 '+esc(p.nursery):'')+'</div>';
-      h+='<div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap">';
-      var rc2=p.rusticity<=-14?'var(--green)':p.rusticity<=-12?'var(--blue)':'var(--accent)';
-      var rb2=p.rusticity<=-14?'var(--green-l)':p.rusticity<=-12?'var(--blue-l)':'var(--accent-l)';
+
+      // Tags
+      h+='<div style="margin-top:5px;display:flex;gap:4px;flex-wrap:wrap">';
+      var rc2=parseInt(p.rusticity||0)<=-14?'var(--green)':parseInt(p.rusticity||0)<=-12?'var(--blue)':'var(--accent)';
+      var rb2=parseInt(p.rusticity||0)<=-14?'var(--green-l)':parseInt(p.rusticity||0)<=-12?'var(--blue-l)':'var(--accent-l)';
       h+='<span class="bdg" style="background:'+rb2+';color:'+rc2+'">\u2744\ufe0f '+(p.rusticity||'?')+'\u00b0C</span>';
       var harv=fmtHarvest(p);
-      if(harv)h+='<span class="bdg" style="background:#F5EDE0;color:var(--muted)">'+harv+'</span>';
+      if(harv)h+='<span class="bdg" style="background:#F0E0CC;color:var(--muted)">'+harv+'</span>';
       h+='</div>';
+
+      // Fruct bar
       if(p.harvestStart!==''&&p.harvestEnd!==''){
         h+='<div style="display:flex;gap:2px;margin-top:6px">';
         var hs=parseInt(p.harvestStart),he=parseInt(p.harvestEnd);
         for(var mi=0;mi<12;mi++){
           var isH=(hs<=he)?(mi>=hs&&mi<=he):(mi>=hs||mi<=he);
-          h+='<div style="flex:1;height:4px;border-radius:2px;background:'+(isH?'#E8820C':'#F5EDE0')+'"></div>';
+          h+='<div style="flex:1;height:5px;border-radius:3px;background:'+(isH?'var(--accent)':'#F0E0CC')+'"></div>';
         }
         h+='</div>';
       }
-      h+='</div></div>';
+      h+='</div>';
+
+      // Chevron
+      h+='<span style="font-size:18px;color:var(--brd)">\u203a</span>';
+      h+='</div>';
     });
     if(D.plants.length>4){
-      h+='<button class="btn btn-s w100 jc" style="font-size:13px" data-go="plants">Voir les '+D.plants.length+' plantes \u2192</button>';
+      h+='<button class="btn btn-p w100 jc" style="margin-top:4px" data-go="plants">Voir les '+D.plants.length+' plantes \u2192</button>';
     }
   }
 
+  // Repot
   h+=rRepotBanner();
   h+=rFertSection();
 
+  // Recent activity
   if(rc.length){
-    h+='<div class="fb" style="margin:16px 0 8px"><div class="sec-label" style="margin:0">Activit\u00e9 r\u00e9cente</div><button class="bs bs-a" data-go="care">Tout voir</button></div>';
+    h+='<div class="fb" style="margin:16px 0 10px"><div class="sec-label" style="margin:0">\ud83d\udcc8 Activit\u00e9 r\u00e9cente</div><button class="bs bs-a" data-go="care">Tout voir</button></div>';
     rc.forEach(function(log){
       var pl=D.plants.find(function(p){return p.id===log.plantId});
-      h+='<div class="ri"><span style="font-size:18px">'+TE[log.type]+'</span><div class="g1"><div style="font-size:13px;font-weight:600">'+esc(pl?pl.name:'?')+' \u2014 '+TL[log.type]+'</div><div style="font-size:11px;color:var(--muted)">'+fd(log.date)+(log.fertilizerType?' \u2022 '+esc(log.fertilizerType):'')+(log.fruitCount?' \u2022 '+log.fruitCount+' fruits':'')+'</div></div></div>';
+      h+='<div class="ri"><span style="font-size:20px">'+TE[log.type]+'</span><div class="g1"><div style="font-size:13px;font-weight:700">'+esc(pl?pl.name:'?')+' \u2014 '+TL[log.type]+'</div><div style="font-size:11px;color:var(--muted)">'+fd(log.date)+(log.fertilizerType?' \u2022 '+esc(log.fertilizerType):'')+(log.fruitCount?' \u2022 '+log.fruitCount+' fruits':'')+'</div></div></div>';
     });
   }
 
+  // Share
   if(D.plants.length>=1){
-    h+='<div class="qk" style="margin-top:12px;cursor:pointer" data-go="share"><span class="qk-ico">\ud83d\udce4</span><div><div class="qk-tl">Partager ma collection</div><div class="qk-tv">'+D.plants.length+' agrume'+(D.plants.length>1?'s':'')+'</div></div></div>';
+    h+='<div class="qk" style="margin-top:14px;cursor:pointer;background:linear-gradient(135deg,#F4ECF7,#E8DAEF)" data-go="share"><span style="font-size:28px">\ud83d\udce4</span><div><div class="qk-tl">Partager ma collection</div><div class="qk-tv">'+D.plants.length+' agrume'+(D.plants.length>1?'s':'')+'</div></div></div>';
   }
 
+  // Empty state
   if(!D.plants.length){
-    h+='<div class="empty"><div style="font-size:48px;margin-bottom:12px">\ud83c\udf31</div><div style="font-size:16px;font-weight:600;margin-bottom:6px">C\'est encore vide ici !</div><div style="font-size:13px">Ajoute ta premi\u00e8re plante</div><button class="btn btn-p" style="margin-top:16px" data-do="add-plant">\uff0b Ajouter un agrume</button></div>';
+    h+='<div class="empty"><div style="font-size:56px;margin-bottom:16px">\ud83c\udf31</div><div style="font-size:18px;font-weight:700;margin-bottom:6px">C\'est encore vide ici !</div><div style="font-size:13px;margin-bottom:16px">Ajoute ta premi\u00e8re plante pour commencer</div><button class="btn btn-p" style="padding:14px 28px;font-size:16px" data-do="add-plant">\uff0b Ajouter un agrume</button></div>';
   }
 
-  h+='<div style="text-align:center;padding:16px 0 8px"><div style="font-size:22px;margin-bottom:4px">\ud83c\udf4b</div><div style="font-size:12px;font-weight:600;color:var(--txt)">Mon Jardin d\'Agrumes</div><div style="font-size:10px;color:var(--muted)">v5.2 \u2022 Terra Citrus</div></div>';
+  // Footer
+  h+='<div style="text-align:center;padding:20px 0 8px"><div style="font-size:28px;margin-bottom:6px">\ud83c\udf4b</div><div style="font-size:13px;font-weight:700;color:var(--txt)">Mon Jardin d\'Agrumes</div><div style="font-size:10px;color:var(--muted);margin-top:2px">v5.3 \u2022 Terra Citrus</div></div>';
 
   return h+'</div>';
 }
