@@ -89,6 +89,7 @@ textarea.inp{resize:vertical;min-height:56px}
 .alert-bar{background:linear-gradient(135deg,#FFF3E0,#FFE8CC);border:none;border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:10px;margin-bottom:14px;box-shadow:0 2px 8px rgba(230,126,34,.12)}
 .alert-bar .adot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .alert-bar p{font-size:12px;font-weight:500;margin:0}
+.mc input,.mc textarea,.mc select{-webkit-user-select:text;user-select:text}
 </style>
 </head>
 <body>
@@ -319,6 +320,18 @@ function rFertSection(){
   return h;
 }
 
+// === SAVE: localStorage (instant) + Firestore (cloud backup) ===
+function saveToLocal(){
+  if(!currentUser)return;
+  try{
+    var key='agrumes_'+currentUser.uid;
+    var data={plants:D.plants,careLogs:D.careLogs,greenhouse:D.greenhouse,settings:D.settings,
+      wishlist:D.wishlist||[],wishlistInited:D.wishlistInited||false,encV5:D.encV5||false,
+      savedAt:Date.now()};
+    localStorage.setItem(key,JSON.stringify(data));
+  }catch(e){console.error('localStorage save error:',e);}
+}
+
 function saveToFirebase(){
   if(!currentUser)return;
   db.collection('users').doc(currentUser.uid).set({
@@ -331,18 +344,22 @@ function saveToFirebase(){
     encV5:D.encV5||false,
     updatedAt:firebase.firestore.FieldValue.serverTimestamp()
   }).then(function(){
-    console.log('Saved OK',new Date().toLocaleTimeString());
-  }).catch(function(e){console.error('Save error:',e)});
+    console.log('Cloud sync OK',new Date().toLocaleTimeString());
+  }).catch(function(e){console.error('Cloud sync error:',e)});
 }
 
 var dataLoaded=false;
 var _migrationDone=false;
 
-function loadFromFirebase(){
+function loadData(){
   if(!currentUser)return;
-  db.collection('users').doc(currentUser.uid).get({source:'server'}).then(function(doc){
-    if(doc.exists){
-      var d=doc.data();
+  // 1. Load from localStorage FIRST (always has latest data)
+  var loaded=false;
+  try{
+    var key='agrumes_'+currentUser.uid;
+    var raw=localStorage.getItem(key);
+    if(raw){
+      var d=JSON.parse(raw);
       D.plants=d.plants||[];
       D.careLogs=d.careLogs||[];
       D.greenhouse=d.greenhouse||DD.greenhouse;
@@ -350,13 +367,41 @@ function loadFromFirebase(){
       D.wishlist=d.wishlist||[];
       D.wishlistInited=d.wishlistInited||false;
       D.encV5=d.encV5||false;
+      loaded=true;
+      console.log('Loaded from localStorage',D.plants.length,'plants',D.wishlist.length,'wishlist');
     }
+  }catch(e){console.error('localStorage load error:',e);}
+
+  if(loaded){
     dataLoaded=true;
     R();
     if(!weatherData&&D.settings.weatherAlerts)fetchWeather();
-  }).catch(function(err){
-    // If server fails (offline), try cache
-    db.collection('users').doc(currentUser.uid).get({source:'cache'}).then(function(doc){
+    // Still sync FROM server in background (to get data from other devices)
+    // But only if server data is NEWER than local
+    db.collection('users').doc(currentUser.uid).get().then(function(doc){
+      if(doc.exists){
+        var d=doc.data();
+        var serverTime=d.updatedAt?d.updatedAt.toMillis():0;
+        var localRaw=localStorage.getItem('agrumes_'+currentUser.uid);
+        var localTime=localRaw?JSON.parse(localRaw).savedAt||0:0;
+        if(serverTime>localTime){
+          // Server is newer (edited from another device)
+          D.plants=d.plants||[];
+          D.careLogs=d.careLogs||[];
+          D.greenhouse=d.greenhouse||DD.greenhouse;
+          D.settings=d.settings||DD.settings;
+          D.wishlist=d.wishlist||[];
+          D.wishlistInited=d.wishlistInited||false;
+          D.encV5=d.encV5||false;
+          saveToLocal(); // update local cache
+          R();
+          console.log('Updated from server (newer data)');
+        }
+      }
+    }).catch(function(e){console.log('Server sync skipped:',e.message)});
+  } else {
+    // No localStorage data - first time or new device: load from Firestore
+    db.collection('users').doc(currentUser.uid).get().then(function(doc){
       if(doc.exists){
         var d=doc.data();
         D.plants=d.plants||[];
@@ -366,19 +411,22 @@ function loadFromFirebase(){
         D.wishlist=d.wishlist||[];
         D.wishlistInited=d.wishlistInited||false;
         D.encV5=d.encV5||false;
+        saveToLocal(); // populate local cache
       }
       dataLoaded=true;
       R();
-    }).catch(function(err2){
-      console.error('Load error:',err2);
+      if(!weatherData&&D.settings.weatherAlerts)fetchWeather();
+    }).catch(function(err){
+      console.error('Load error:',err);
       dataLoaded=true;
       R();
     });
-  });
+  }
 }
 
 function persist(){
-  saveToFirebase();
+  saveToLocal();     // instant, never fails
+  saveToFirebase();  // cloud backup
 }
 
 // ── Auth ──
@@ -388,7 +436,7 @@ auth.onAuthStateChanged(function(user){
     currentUser=user;
     dataLoaded=false;
     _migrationDone=false;
-    loadFromFirebase();
+    loadData();
   } else {
     currentUser=null;
     D=JSON.parse(JSON.stringify(DD));
@@ -802,7 +850,7 @@ function mWL(item){
     +(ed?'<button class="bs bs-r" data-wldel="'+item.id+'">\ud83d\uddd1\ufe0f Supprimer</button>':'')
     +'<button class="btn btn-s" data-cls>Annuler</button><button class="btn btn-p g1 jc" data-wlsave="'+item.id+'" data-ed="'+ed+'">'+(ed?'Enregistrer':'Ajouter')+'</button></div></div>';
   document.body.appendChild(ov);
-  ov.addEventListener('click',function(e){if(e.target===ov)cM()});
+  ov.addEventListener('click',function(e){if(e.target===ov&&!window.getSelection().toString())cM()});
   ov.addEventListener('change',function(e){
     if(e.target.classList.contains('fruct-ck')){
       var lbl=e.target.parentElement;
@@ -1687,7 +1735,7 @@ function mPlant(p){
     +'<div class="fld"><label class="lbl">Notes</label><textarea class="inp" id="ft">'+esc(p.notes)+'</textarea></div>'
     +'<div style="display:flex;gap:10px;margin-top:8px"><button class="btn btn-s" data-cls>Annuler</button><button class="btn btn-p g1 jc" data-svp="'+p.id+'" data-ed="'+ed+'">'+(ed?'Enregistrer':'Ajouter')+' \ud83c\udf4a</button></div></div>';
   document.body.appendChild(ov);
-  ov.addEventListener('click',function(e){if(e.target===ov)cM()});
+  ov.addEventListener('click',function(e){if(e.target===ov&&!window.getSelection().toString())cM()});
 }
 
 function mCare(pre){
@@ -1716,7 +1764,7 @@ function mCare(pre){
     +'<div class="fld"><label class="lbl">Notes</label><textarea class="inp" id="cn"></textarea></div>'
     +'<button class="btn btn-p w100 jc" style="margin-top:8px" data-svc>Enregistrer \u2713</button></div>';
   document.body.appendChild(ov);CT='watering';
-  ov.addEventListener('click',function(e){if(e.target===ov)cM()});
+  ov.addEventListener('click',function(e){if(e.target===ov&&!window.getSelection().toString())cM()});
 }
 
 function getSelectedPlants(){
@@ -1793,7 +1841,7 @@ function mHist(plantId){
   ov.innerHTML=hm;
   document.body.appendChild(ov);
   ov.addEventListener('click',function(e){
-    if(e.target===ov)cM();
+    if(e.target===ov&&!window.getSelection().toString())cM();
     var hf=e.target.closest('[data-histf]');
     if(hf){
       var filter=hf.getAttribute('data-histf');
@@ -1890,7 +1938,7 @@ document.addEventListener('click',function(e){
       car.symptoms.forEach(function(s){ov.querySelector('.mc').innerHTML+='<div style="font-size:13px;padding:3px 0">\u2022 '+esc(s)+'</div>'});
       ov.querySelector('.mc').innerHTML+='</div>';
       document.body.appendChild(ov);
-      ov.addEventListener('click',function(e){if(e.target===ov)cM()});
+      ov.addEventListener('click',function(e){if(e.target===ov&&!window.getSelection().toString())cM()});
       return;
     }
   }
@@ -1991,6 +2039,7 @@ document.addEventListener('click',function(e){
     return;}
   var wlsave=t.closest('[data-wlsave]');
   if(wlsave){var nm=gv('wln');if(!nm){alert('Donne un nom !');return;}
+    try{
     initWishlist();
     var existingItem=D.wishlist.find(function(v){return v.id===wlsave.getAttribute('data-wlsave')});
     var usageVal=gv('wlusage');
@@ -2004,20 +2053,19 @@ document.addEventListener('click',function(e){
       src:gv('wlsrc')||''};
     if(wlsave.getAttribute('data-ed')==='true'){var idx=D.wishlist.findIndex(function(v){return v.id===nv.id});if(idx>=0)D.wishlist[idx]=nv;}
     else D.wishlist.push(nv);
-    // Auto-add to plant collection when status is "greffe"
     // Auto-add to plant collection when status is "greffe" or "collection"
     if(nv.status==='greffe'||nv.status==='collection'){
       var alreadyInPlants=D.plants.some(function(p){return p.name.toLowerCase()===nv.name.toLowerCase()});
       if(!alreadyInPlants){
         var harvestStart='',harvestEnd='';
         if(nv.fruct&&nv.fruct.length){harvestStart=''+(nv.fruct[0]-1);harvestEnd=''+(nv.fruct[nv.fruct.length-1]-1);}
-        var loc=nv.status==='greffe'?'serre':'serre';
-        D.plants.push({id:gid(),name:nv.name,variety:nv.type||'',location:loc,purchaseDate:td(),
+        D.plants.push({id:gid(),name:nv.name,variety:nv.type||'',location:'serre',purchaseDate:td(),
           rusticity:''+nv.rusticity,nursery:nv.src||'',rootstock:'',notes:(nv.rem||'')+'\nAjout\u00e9 depuis l\'encyclop\u00e9die',
-          harvestStart:harvestStart,harvestEnd:harvestEnd,usage:[],photo:''});
+          harvestStart:harvestStart,harvestEnd:harvestEnd,usage:[],photo:'',firstFlower:''});
       }
     }
-    persist();cM();R();return;}
+    }catch(err){console.error('Save WL error:',err);}
+    cM();persist();R();return;}
   var wldel=t.closest('[data-wldel]');
   if(wldel&&confirm('Supprimer cette vari\u00e9t\u00e9 ?')){
     initWishlist();
