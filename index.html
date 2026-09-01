@@ -561,6 +561,7 @@ var STATUTS=[
 {v:'a_acheter',l:'\ud83d\uded2 \u00c0 acheter',c:'a'},
 {v:'commande',l:'\ud83d\udce6 Command\u00e9',c:'b'},
 {v:'greffe',l:'\ud83c\udf31 Greff\u00e9',c:'g'},
+{v:'greffe_ratee',l:'\u274c Greffe rat\u00e9e',c:'r'},
 {v:'collection',l:'\u2705 Dans ma collection',c:'g'},
 {v:'pas_maintenant',l:'\u23f8\ufe0f Pas pour le moment',c:'n'}
 ];
@@ -610,6 +611,39 @@ function initWishlist(){
 
 function getStatut(v){for(var i=0;i<STATUTS.length;i++)if(STATUTS[i].v===v)return STATUTS[i];return STATUTS[0]}
 
+// Sync encyclopedia with actual plant collection
+function syncWishlistWithPlants(){
+  if(!D.plants||!D.wishlist)return;
+  var changed=false;
+  // Build a map of plant names in collection (lowercase)
+  var plantNames={};
+  D.plants.forEach(function(p){plantNames[p.name.toLowerCase().trim()]=true});
+
+  D.wishlist.forEach(function(w){
+    var inPlants=plantNames[w.name.toLowerCase().trim()];
+    // If plant is in collection but wishlist status is still "à voir" or "à acheter" or "commandé" → upgrade to "collection"
+    if(inPlants && (w.status==='a_voir'||w.status==='a_acheter'||w.status==='commande')){
+      w.status='collection';
+      changed=true;
+    }
+  });
+
+  // Also check if plants in D.plants are missing from wishlist → add them
+  D.wishlist.forEach(function(w){plantNames[w.name.toLowerCase().trim()]=w});
+  D.plants.forEach(function(p){
+    var pn=p.name.toLowerCase().trim();
+    if(!plantNames[pn]||plantNames[pn]===true){
+      // Plant exists in collection but not in encyclopedia → add it
+      D.wishlist.push({id:gid(),name:p.name,rusticity:parseInt(p.rusticity)||-10,fruct:[],
+        fb:0,fc:0,priority:3,status:'collection',notes:'',
+        cat:'',type:p.variety||'',usage:'',rem:'',src:p.nursery||''});
+      changed=true;
+    }
+  });
+
+  if(changed)persist();
+}
+
 function rStars(n,clickable,prefix){
   var h='';
   for(var i=1;i<=5;i++){
@@ -621,14 +655,17 @@ function rStars(n,clickable,prefix){
 
 function rEnc(){
   initWishlist();
+  syncWishlistWithPlants();
   var wl=D.wishlist;
-  var h='<div class="hdr"><div class="fb"><div><button data-go="home" style="background:none;border:none;cursor:pointer;color:#fff;font-size:14px;margin-bottom:8px;padding:0;font-family:inherit">\u2190 Retour</button><h1>\ud83d\udcd6 Encyclop\u00e9die Agrumes</h1><div class="hdr-sub">'+wl.length+' vari\u00e9t\u00e9'+(wl.length>1?'s':'')+' r\u00e9f\u00e9renc\u00e9es \u2022 Normandie</div></div><button class="btn btn-w" style="padding:8px 14px;font-size:13px" data-do="add-wl">\uff0b Ajouter</button></div></div><div class="sec">';
+  var nbInCollection=wl.filter(function(v){return v.status==='collection'||v.status==='greffe'}).length;
+  var h='<div class="hdr"><div class="fb"><div><button data-go="home" style="background:none;border:none;cursor:pointer;color:#fff;font-size:14px;margin-bottom:8px;padding:0;font-family:inherit">\u2190 Retour</button><h1>\ud83d\udcd6 Encyclop\u00e9die Agrumes</h1><div class="hdr-sub">'+wl.length+' vari\u00e9t\u00e9'+(wl.length>1?'s':'')+' r\u00e9f\u00e9renc\u00e9es \u2022 '+nbInCollection+' dans ma collection</div></div><button class="btn btn-w" style="padding:8px 14px;font-size:13px" data-do="add-wl">\uff0b Ajouter</button></div></div><div class="sec">';
 
   // Stats rapides
   var nbAv=wl.filter(function(v){return v.status==='a_voir'}).length;
   var nbA=wl.filter(function(v){return v.status==='a_acheter'}).length;
   var nbC=wl.filter(function(v){return v.status==='commande'}).length;
   var nbG=wl.filter(function(v){return v.status==='greffe'}).length;
+  var nbGR=wl.filter(function(v){return v.status==='greffe_ratee'}).length;
   var nbCo=wl.filter(function(v){return v.status==='collection'}).length;
   var nbPm=wl.filter(function(v){return v.status==='pas_maintenant'}).length;
   h+='<div style="display:flex;gap:6px;margin-bottom:6px">';
@@ -638,6 +675,7 @@ function rEnc(){
   h+='</div>';
   h+='<div style="display:flex;gap:6px;margin-bottom:12px">';
   h+='<div class="cd sc" style="flex:1;min-width:0;padding:8px;cursor:pointer" data-wlf="greffe"><div class="sn" style="font-size:18px;color:var(--green)">'+nbG+'</div><div class="sl">Greff\u00e9</div></div>';
+  h+='<div class="cd sc" style="flex:1;min-width:0;padding:8px;cursor:pointer" data-wlf="greffe_ratee"><div class="sn" style="font-size:18px;color:var(--red)">'+nbGR+'</div><div class="sl">Rat\u00e9e</div></div>';
   h+='<div class="cd sc" style="flex:1;min-width:0;padding:8px;cursor:pointer" data-wlf="collection"><div class="sn" style="font-size:18px;color:var(--green)">'+nbCo+'</div><div class="sl">Collection</div></div>';
   h+='<div class="cd sc" style="flex:1;min-width:0;padding:8px;cursor:pointer" data-wlf="pas_maintenant"><div class="sn" style="font-size:18px;color:var(--muted)">'+nbPm+'</div><div class="sl">Pas mnt</div></div>';
   h+='</div>';
@@ -658,7 +696,7 @@ function rEnc(){
   h+='</div>';
 
   // Statut & usage filters
-  var FILT=[{v:'all',l:'Toutes'},{v:'a_voir',l:'\ud83e\udd14 \u00c0 voir'},{v:'a_acheter',l:'\ud83d\uded2 \u00c0 acheter'},{v:'commande',l:'\ud83d\udce6 Command\u00e9'},{v:'greffe',l:'\ud83c\udf31 Greff\u00e9'},{v:'collection',l:'\u2705 Collection'},{v:'pas_maintenant',l:'\u23f8\ufe0f Pas mnt'},{v:'bouche',l:'\ud83c\udf4a Bouche'},{v:'cuisine',l:'\ud83c\udf73 Cuisine'}];
+  var FILT=[{v:'all',l:'Toutes'},{v:'a_voir',l:'\ud83e\udd14 \u00c0 voir'},{v:'a_acheter',l:'\ud83d\uded2 \u00c0 acheter'},{v:'commande',l:'\ud83d\udce6 Command\u00e9'},{v:'greffe',l:'\ud83c\udf31 Greff\u00e9'},{v:'greffe_ratee',l:'\u274c Rat\u00e9e'},{v:'collection',l:'\u2705 Collection'},{v:'pas_maintenant',l:'\u23f8\ufe0f Pas mnt'},{v:'bouche',l:'\ud83c\udf4a Bouche'},{v:'cuisine',l:'\ud83c\udf73 Cuisine'}];
   h+='<div style="display:flex;gap:6px;margin-bottom:10px;overflow-x:auto">';
   FILT.forEach(function(f){h+='<button class="bs '+(wlFilter===f.v?'bs-a':'bs-n')+'" data-wlf="'+f.v+'" style="white-space:nowrap;font-size:11px">'+f.l+'</button>'});
   h+='</div>';
@@ -673,7 +711,7 @@ function rEnc(){
     if(wlCat!=='all'&&v.cat!==wlCat)return false;
     if(wlFilter==='bouche')return v.fb;
     if(wlFilter==='cuisine')return v.fc;
-    if(wlFilter==='a_acheter'||wlFilter==='commande'||wlFilter==='greffe'||wlFilter==='collection'||wlFilter==='a_voir'||wlFilter==='pas_maintenant')return v.status===wlFilter;
+    if(wlFilter==='a_acheter'||wlFilter==='commande'||wlFilter==='greffe'||wlFilter==='greffe_ratee'||wlFilter==='collection'||wlFilter==='a_voir'||wlFilter==='pas_maintenant')return v.status===wlFilter;
     return true;
   });
 
@@ -722,6 +760,11 @@ function rEnc(){
       // Sources
       if(v.src)h+='<div style="font-size:10px;color:var(--muted);margin-top:2px">\ud83d\udccd '+esc(v.src)+'</div>';
       if(v.notes)h+='<div style="font-size:11px;color:var(--muted);margin-top:4px;font-style:italic;border-top:1px solid var(--brd);padding-top:4px">\ud83d\udcdd '+esc(v.notes)+'</div>';
+      // Link to plant if in collection
+      var linkedPlant=D.plants.find(function(p){return p.name.toLowerCase().trim()===v.name.toLowerCase().trim()});
+      if(linkedPlant){
+        h+='<div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--brd)"><button class="bs bs-g" data-det="'+linkedPlant.id+'" style="font-size:10px">\ud83c\udf4a Voir la fiche plante \u2192</button></div>';
+      }
       h+='</div>';
     });
   }
