@@ -134,7 +134,6 @@ var DD={plants:[],careLogs:[],greenhouse:{width:6,height:4,positions:{}},setting
 var D=JSON.parse(JSON.stringify(DD));
 var weatherData=null;
 var weatherLoading=false;
-var saveTimer=null;
 
 function gid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 function td(){return new Date().toISOString().split('T')[0]}
@@ -322,36 +321,26 @@ function rFertSection(){
 
 function saveToFirebase(){
   if(!currentUser)return;
-  if(saveTimer)clearTimeout(saveTimer);
-  saveTimer=setTimeout(function(){
-    _dirty=false;
-    db.collection('users').doc(currentUser.uid).set({
-      plants:D.plants,
-      careLogs:D.careLogs,
-      greenhouse:D.greenhouse,
-      settings:D.settings,
-      wishlist:D.wishlist||[],
-      wishlistInited:D.wishlistInited||false,
-      encV5:D.encV5||false,
-      updatedAt:firebase.firestore.FieldValue.serverTimestamp()
-    }).catch(function(e){console.error('Save error:',e);_dirty=true;});
-  },300);
+  db.collection('users').doc(currentUser.uid).set({
+    plants:D.plants,
+    careLogs:D.careLogs,
+    greenhouse:D.greenhouse,
+    settings:D.settings,
+    wishlist:D.wishlist||[],
+    wishlistInited:D.wishlistInited||false,
+    encV5:D.encV5||false,
+    updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+  }).then(function(){
+    console.log('Saved OK',new Date().toLocaleTimeString());
+  }).catch(function(e){console.error('Save error:',e)});
 }
 
 var dataLoaded=false;
 var _migrationDone=false;
-var _dirty=false; // true when local data has unsaved changes
-var _firstLoad=true;
-var unsub=null;
 
-function listenToFirebase(){
-  if(unsub)unsub();
+function loadFromFirebase(){
   if(!currentUser)return;
-  unsub=db.collection('users').doc(currentUser.uid).onSnapshot(function(doc){
-    // NEVER overwrite local data if we have unsaved changes
-    if(_dirty)return;
-    // After first load, ignore for 3 seconds after any save
-    if(!_firstLoad && saveTimer)return;
+  db.collection('users').doc(currentUser.uid).get({source:'server'}).then(function(doc){
     if(doc.exists){
       var d=doc.data();
       D.plants=d.plants||[];
@@ -363,18 +352,32 @@ function listenToFirebase(){
       D.encV5=d.encV5||false;
     }
     dataLoaded=true;
-    _firstLoad=false;
     R();
     if(!weatherData&&D.settings.weatherAlerts)fetchWeather();
-  },function(err){
-    console.error('Firestore listen error:',err);
-    dataLoaded=true;
-    R();
+  }).catch(function(err){
+    // If server fails (offline), try cache
+    db.collection('users').doc(currentUser.uid).get({source:'cache'}).then(function(doc){
+      if(doc.exists){
+        var d=doc.data();
+        D.plants=d.plants||[];
+        D.careLogs=d.careLogs||[];
+        D.greenhouse=d.greenhouse||DD.greenhouse;
+        D.settings=d.settings||DD.settings;
+        D.wishlist=d.wishlist||[];
+        D.wishlistInited=d.wishlistInited||false;
+        D.encV5=d.encV5||false;
+      }
+      dataLoaded=true;
+      R();
+    }).catch(function(err2){
+      console.error('Load error:',err2);
+      dataLoaded=true;
+      R();
+    });
   });
 }
 
 function persist(){
-  _dirty=true;
   saveToFirebase();
 }
 
@@ -384,12 +387,10 @@ auth.onAuthStateChanged(function(user){
   if(user){
     currentUser=user;
     dataLoaded=false;
-    _firstLoad=true;
     _migrationDone=false;
-    listenToFirebase();
+    loadFromFirebase();
   } else {
     currentUser=null;
-    if(unsub){unsub();unsub=null;}
     D=JSON.parse(JSON.stringify(DD));
     dataLoaded=false;
     showLogin();
