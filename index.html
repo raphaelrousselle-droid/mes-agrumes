@@ -324,6 +324,7 @@ function saveToFirebase(){
   if(!currentUser)return;
   if(saveTimer)clearTimeout(saveTimer);
   saveTimer=setTimeout(function(){
+    _lastSaveTime=Date.now();
     db.collection('users').doc(currentUser.uid).set({
       plants:D.plants,
       careLogs:D.careLogs,
@@ -339,10 +340,16 @@ function saveToFirebase(){
 
 var dataLoaded=false;
 var _migrationDone=false;
+var _lastSaveTime=0;
+var _firstLoad=true;
+var unsub=null;
 
-function loadFromFirebase(){
+function listenToFirebase(){
+  if(unsub)unsub();
   if(!currentUser)return;
-  db.collection('users').doc(currentUser.uid).get().then(function(doc){
+  unsub=db.collection('users').doc(currentUser.uid).onSnapshot(function(doc){
+    // After first load, ignore snapshots that arrive within 2s of our own save
+    if(!_firstLoad && (Date.now()-_lastSaveTime)<2000)return;
     if(doc.exists){
       var d=doc.data();
       D.plants=d.plants||[];
@@ -354,10 +361,11 @@ function loadFromFirebase(){
       D.encV5=d.encV5||false;
     }
     dataLoaded=true;
+    _firstLoad=false;
     R();
     if(!weatherData&&D.settings.weatherAlerts)fetchWeather();
-  }).catch(function(err){
-    console.error('Firestore load error:',err);
+  },function(err){
+    console.error('Firestore listen error:',err);
     dataLoaded=true;
     R();
   });
@@ -373,9 +381,12 @@ auth.onAuthStateChanged(function(user){
   if(user){
     currentUser=user;
     dataLoaded=false;
-    loadFromFirebase();
+    _firstLoad=true;
+    _migrationDone=false;
+    listenToFirebase();
   } else {
     currentUser=null;
+    if(unsub){unsub();unsub=null;}
     D=JSON.parse(JSON.stringify(DD));
     dataLoaded=false;
     showLogin();
