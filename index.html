@@ -144,7 +144,7 @@ function td(){var d=new Date(),m=d.getMonth()+1,j=d.getDate();return d.getFullYe
 function fd(d){return d?new Date(d+'T00:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'}):'\u2014'}
 
 var LOCS=[{v:'serre',l:'\ud83c\udfe0 Serre',c:'a'},{v:'pot',l:'\ud83e\udeb4 Pot (ext.)',c:'b'},{v:'pleine_terre',l:'\ud83c\udf31 Pleine terre',c:'g'}];
-var VER='6.0';
+var VER='6.1';
 var RUST=[];for(var ri=0;ri>=-25;ri--)RUST.push({v:''+ri,l:ri+'°C'});
 function rustOpts(cur){
   cur=(cur===undefined||cur===null)?'':''+cur;
@@ -170,6 +170,13 @@ var TE={},TL={},CARE_COLS={};
 CARE_TYPES.forEach(function(t){TE[t.v]=t.e;TL[t.v]=t.l;CARE_COLS[t.v]=t.c});
 var CARE_FILTERS=[{id:'all',l:'Tous'},{id:'watering',l:'💧 Arrosage'},{id:'fertilizer',l:'🧪 Engrais'},{id:'fruit',l:'🍊 Fruits'},{id:'repot',l:'🪴 Rempotage'},{id:'prune',l:'✂️ Taille'},{id:'treat',l:'🛡️ Traitement'}];
 var careLimit=100;
+// Plante en pleine terre : dehors, ou placee sur le plan de la serre (plantee dans le sol de la serre)
+function inGround(p){
+  if(p.location==='pleine_terre')return true;
+  if(p.location!=='serre')return false;
+  var pos=(D.greenhouse&&D.greenhouse.positions)||{};
+  return Object.keys(pos).some(function(k){return pos[k]===p.id});
+}
 // Date du dernier rempotage d'une plante (soin "Rempotage", ou ancien soin dont la note contient "rempot")
 function lastRepotDate(pid){
   var last=null;
@@ -1503,7 +1510,7 @@ function rDiag(){
 function getRepotAlerts(){
   var now=new Date(),alerts=[];
   D.plants.forEach(function(p){
-    if(p.location==='pleine_terre')return; // pas de rempotage en pleine terre
+    if(inGround(p))return; // pas de rempotage en pleine terre
     if(!p.purchaseDate)return;
     var purchase=new Date(p.purchaseDate+'T00:00:00');
     var years=(now-purchase)/(365.25*864e5);
@@ -1738,6 +1745,8 @@ function getTasksForMonth(m){
 
     // Séparer pleine terre vs pot/serre (les conseils pot/serre sont souvent les mêmes)
     var potSerre=concerned.filter(function(p){return p.location==='pot'||p.location==='serre'});
+    // Taches propres aux pots : pas pour les plantes en pleine terre dans la serre
+    if(t.title.indexOf('Rempotage')===0||t.title.indexOf('Surfa')===0||t.title.indexOf('drainage')>=0)potSerre=potSerre.filter(function(p){return !inGround(p)});
     var terre=concerned.filter(function(p){return p.location==='pleine_terre'});
 
     if(potSerre.length&&(t.locs.indexOf('pot')>=0||t.locs.indexOf('serre')>=0)){
@@ -2145,7 +2154,7 @@ function rD(){
   h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"><span class="bdg '+bc(lo.c)+'">'+lo.l+'</span><span class="bdg bdg-b">\u2744\ufe0f '+(p.rusticity||'?')+'\u00b0C</span><div class="g1"></div><button class="bs bs-a" data-do="edit-plant">\u270f\ufe0f Modifier</button><button class="bs bs-r" data-xp="'+p.id+'">\ud83d\uddd1\ufe0f</button></div>';
 
   // Repot indicator for pot/serre plants
-  if(p.location!=='pleine_terre'&&p.purchaseDate){
+  if(!inGround(p)&&p.purchaseDate){
     var _now=new Date(),_ref=new Date(p.purchaseDate+'T00:00:00'),_lastR=null;
     _lastR=lastRepotDate(p.id);
     if(_lastR)_ref=new Date(_lastR+'T00:00:00');
